@@ -12,8 +12,11 @@ const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogni
 
 // ─── MicHero ──────────────────────────────────────────────────────────────────
 const MIC_STYLES = {
+  // scale from bottom, then push down so visual bottom overlaps button by 8px
+  // button top = container_height - 88; mic bottom after scale(0.22) from bottom-origin = container - 209
+  // need to move down: (container - 88 + 8) - (container - 209) = 113px → translateY(113px)
   map: {
-    transform:  'translateY(calc(100dvh - 620.75px)) scale(0.22) rotate(5.78deg)',
+    transform:  'translateY(113px) scale(0.22) rotate(5.78deg)',
     opacity:    1,
     transition: 'transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.3s ease',
   },
@@ -34,9 +37,9 @@ function MicHero({ mode }) {
   return (
     <div style={{
       position: 'absolute',
-      left: -1, top: 243, width: 392, height: 475,
+      left: -1, bottom: 209, width: 392, height: 475,
       zIndex: 35, pointerEvents: 'none',
-      transformOrigin: 'center center',
+      transformOrigin: 'center bottom',
       ...MIC_STYLES[mode],
     }}>
       <img src={MIC_IMAGE} alt="mic" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -178,9 +181,11 @@ export default function App() {
         }
       };
       recognition.onend = () => {
-        // Restart if still recording (iOS stops after ~60s)
+        // Restart if still recording — small delay required on iOS Safari
         if (recognitionRef.current) {
-          try { recognition.start(); } catch (_) {}
+          setTimeout(() => {
+            if (recognitionRef.current) try { recognition.start(); } catch (_) {}
+          }, 150);
         }
       };
       recognition.start();
@@ -205,10 +210,13 @@ export default function App() {
   // ── Stop on pointer up ─────────────────────────────────────────────────────
   useEffect(() => {
     if (!recording) return;
+    let fired = false;
     const stop = () => {
+      if (fired) return;
+      fired = true;
       if (recognitionRef.current) {
         const r = recognitionRef.current;
-        recognitionRef.current = null; // clear first so onend doesn't restart
+        recognitionRef.current = null;
         try { r.stop(); } catch (_) {}
       }
       const captured = liveRef.current.trim();
@@ -216,13 +224,11 @@ export default function App() {
       setLiveText('');
 
       if (!captured) {
-        // Nothing spoken — dismiss back to map, mic springs back to small position
         setScreen('map');
         setMicMode('map');
         return;
       }
 
-      // Speech captured — advance to rec-done, mic exits
       setTranscript(captured);
       setScreen('rec-done');
       setMicMode('exit');
