@@ -111,13 +111,11 @@ body {
   pointer-events: none;
   filter: drop-shadow(0 2px 8px rgba(0,0,0,0.12));
 }
-/* Avatar column — hugs the avatar; dot is absolutely positioned here
-   (outside overflow:hidden) so it renders fully visible.            */
+/* Avatar column — just the circle, no dot, no extra sizing. */
 .mc2-avatar-col {
   flex-shrink: 0;
-  position: relative;
-  margin-right: 5px;
-  margin-bottom: 3px;
+  margin-right: 2px;
+  margin-bottom: 2px;
 }
 /* Avatar circle */
 .mc2-avatar {
@@ -133,12 +131,13 @@ body {
   object-fit: cover;
   display: block;
 }
-/* Dot: sits OUTSIDE overflow:hidden, at the top-right of the avatar,
-   bridging avatar → bubble like a thought-bubble connector.         */
+/* Dot: part of the bubble, not the avatar.
+   Positioned at the bubble's bottom-left, pointing toward the avatar.
+   Moves with the bubble as one unit.                                */
 .mc2-dot {
   position: absolute;
-  top: 1px;
-  right: -5px;
+  left: -5px;
+  bottom: 5px;
   width: 8px;
   height: 8px;
   background: white;

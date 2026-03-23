@@ -190,11 +190,11 @@ function createMomentEl(moment) {
         <div class="mc2-avatar">
           <img src="${avatar}" alt="" />
         </div>
-        <div class="mc2-dot"></div>
       </div>
       <div class="mc2-content">
         ${photosHtml}
         <div class="mc2-bubble">
+          <div class="mc2-dot"></div>
           <span class="mc2-text">${text}<span class="mc2-time">${time}</span></span>
         </div>
       </div>
