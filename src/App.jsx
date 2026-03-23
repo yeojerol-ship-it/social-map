@@ -226,13 +226,13 @@ export default function App() {
   return (
     <div style={{
       width: '100vw', height: '100dvh',
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
       background: '#000',
     }}>
       <div style={{
         position: 'relative',
         width: '100%', height: '100%',
+        maxWidth: 390, maxHeight: 844,
         overflow: 'hidden',
         background: '#000', flexShrink: 0,
       }}>
