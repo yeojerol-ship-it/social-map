@@ -225,16 +225,15 @@ export default function App() {
 
   return (
     <div style={{
-      width: '100vw', height: '100vh',
+      width: '100vw', height: '100dvh',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
-      gap: 16, background: '#111',
+      background: '#000',
     }}>
       <div style={{
         position: 'relative',
-        width: 390, height: 844,
-        borderRadius: 44, overflow: 'hidden',
-        boxShadow: '0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.08)',
+        width: '100%', height: '100%',
+        overflow: 'hidden',
         background: '#000', flexShrink: 0,
       }}>
         {/* Map — always the base layer */}

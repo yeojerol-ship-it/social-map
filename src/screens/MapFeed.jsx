@@ -246,7 +246,7 @@ function Overlay({ onRecord, recording }) {
     <div style={{ position: 'absolute', inset: 0, zIndex: 10, pointerEvents: 'none' }}>
       <div style={{
         position: 'absolute', top: 0, left: 0, right: 0,
-        paddingTop: 48, paddingBottom: 28,
+        paddingTop: 72, paddingBottom: 28,
         paddingLeft: 24, paddingRight: 24,
         display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between',
         background: 'linear-gradient(180deg, #F6F4EA -44.26%, rgba(246,244,234,0.00) 100%)',
