@@ -13,7 +13,7 @@ const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogni
 // ─── MicHero ──────────────────────────────────────────────────────────────────
 const MIC_STYLES = {
   map: {
-    transform:  'translateY(227px) scale(0.22) rotate(5.78deg)',
+    transform:  'translateY(calc(100dvh - 620.75px)) scale(0.22) rotate(5.78deg)',
     opacity:    1,
     transition: 'transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.3s ease',
   },
@@ -79,7 +79,7 @@ function RecordingOverlay({ liveText }) {
 
       {/* Pulsating white bubble */}
       <div style={{
-        position: 'absolute', left: '50%', top: 643,
+        position: 'absolute', left: '50%', top: 'calc(100% - 201px)',
         transform: 'translateX(-50%)',
         width: 800, height: 800,
         pointerEvents: 'none',
@@ -255,10 +255,9 @@ export default function App() {
       <div style={{
         position: 'relative',
         width: '100%', height: '100dvh',
-        maxWidth: 390, maxHeight: 844,
+        maxWidth: 390,
         overflow: 'hidden',
         background: '#000', flexShrink: 0,
-        paddingBottom: 'env(safe-area-inset-bottom)',
       }}>
         {/* Map — always the base layer */}
         <div style={{
