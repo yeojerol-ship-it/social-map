@@ -189,8 +189,8 @@ function createMomentEl(moment) {
       <div class="mc2-avatar-col">
         <div class="mc2-avatar">
           <img src="${avatar}" alt="" />
-          <div class="mc2-dot"></div>
         </div>
+        <div class="mc2-dot"></div>
       </div>
       <div class="mc2-content">
         ${photosHtml}
