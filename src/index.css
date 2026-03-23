@@ -103,17 +103,30 @@ body {
 }
 
 /* ── Moment card v2 ─────────────────────────────────────────────── */
-/* Vertical stack: bubble cluster on top, avatar pin at the bottom.
-   Mapbox anchor bottom-left → avatar bottom-left = coordinate.     */
+/* Horizontal flex: avatar-col (fixed height, avatar at bottom) +
+   content-col (photos + bubble, centred vertically).
+   Dot is a direct child of mc2, absolutely positioned at avatar
+   top-right — NOT inside the avatar, NOT inside the bubble.         */
 .mc2 {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  padding-right: 2px;
   position: relative;
   pointer-events: none;
   filter: drop-shadow(0 2px 8px rgba(0,0,0,0.12));
 }
-/* Avatar: the map pin. Bottom-left of the whole marker.             */
+/* Avatar column: fixed 169px height → avatar always at the bottom.
+   Content-col is vertically centred within this height.
+   No-photo variant is shorter (149px) and has no dot.               */
+.mc2-avatar-col {
+  display: flex;
+  align-items: flex-end;
+  height: 169px;
+  margin-right: -2px;
+  flex-shrink: 0;
+}
+.mc2--no-photo .mc2-avatar-col { height: 149px; }
+/* Avatar circle */
 .mc2-avatar {
   width: 36px;
   height: 36px;
@@ -127,37 +140,43 @@ body {
   object-fit: cover;
   display: block;
 }
-/* Dot: absolutely positioned on mc2 at the avatar's top-right.
-   Fixed coordinates → gap to bubble never changes with bubble width.
-   Part of the speech bubble layer; sits above and right of avatar.  */
+/* Dot: absolute on mc2 outer frame at avatar top-right.
+   left:28px ≈ avatar right edge. bottom:25.5px = dot center sits
+   6.5px below avatar top (avatar is 36px, pinned to mc2 bottom).   */
 .mc2-dot {
   position: absolute;
-  left: 24px;
-  bottom: 32px;   /* straddles avatar top — half above, half inside */
+  left: 28px;
+  bottom: 25.5px;
   width: 8px;
   height: 8px;
   background: white;
   border-radius: 50%;
   z-index: 2;
 }
-/* Bubble cluster: offset right so it floats above the avatar.
-   margin-bottom is fixed → constant gap regardless of bubble width. */
+/* Content column: padding-bottom:20px pairs with margin-bottom:-20px
+   on bubble to keep the layout dimensions stable.
+   No-photo: fixed 122px width, no left padding.                     */
 .mc2-content {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: 150px;
-  margin-left: 10px;
-  margin-bottom: 6px;
+  align-items: center;
+  padding-left: 6px;
+  padding-bottom: 20px;
+  flex-shrink: 0;
   position: relative;
 }
-/* 2+ images: bottom-aligned row, photos centered above the bubble. */
+.mc2--no-photo .mc2-content {
+  width: 122px;
+  padding-left: 0;
+}
+/* 2+ images: bottom-aligned row; mb-[-20px] pulls bubble up 20px.  */
 .mc2-photos-2 {
   display: flex;
   align-items: flex-end;
   justify-content: center;
   flex-shrink: 0;
   width: 100%;
+  margin-bottom: -20px;
   position: relative;
   z-index: 0;
 }
@@ -199,13 +218,14 @@ body {
   object-fit: cover;
   display: block;
 }
-/* 1 image: centered, z-index:1 for same reason */
+/* 1 image: same pull-up */
 .mc2-photos-1 {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   width: 100%;
+  margin-bottom: -20px;
   position: relative;
   z-index: 0;
 }
@@ -226,26 +246,38 @@ body {
   object-fit: cover;
   display: block;
 }
-/* No image — no spacer needed in vertical layout */
-.mc2-photos-0 { display: none; }
-/* Bubble — hugs content; slight negative margin overlaps photos for
-   the stacked photo → bubble transition feel.                       */
+/* No image: spacer preserves same vertical rhythm as 1-photo case.
+   mb-[-20px] pairs with bubble mb-[-20px] + content pb-[20px].     */
+.mc2-photos-0 {
+  height: 71.531px;
+  margin-bottom: -20px;
+  flex-shrink: 0;
+  width: 100%;
+}
+/* Bubble: mb-[-20px] folds into content pb-[20px], keeping height
+   stable. z-index:1 renders bubble above photos.                    */
 .mc2-bubble {
   backdrop-filter: blur(4.35px);
   -webkit-backdrop-filter: blur(4.35px);
   background: white;
   border: 1px solid rgba(255,255,255,0.4);
   display: block;
-  margin-top: -10px;
+  margin-bottom: -20px;
   padding: 6px 8px;
-  border-radius: 12px 12px 12px 4px;
+  border-radius: 12px 12px 12px 8px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
   flex-shrink: 0;
   width: fit-content;
   min-width: 64px;
-  max-width: 150px;
+  max-width: 170px;
   position: relative;
   z-index: 1;
+}
+.mc2--no-photo .mc2-bubble {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-bottom: 0;
 }
 /* Sticker — absolutely positioned within .mc2 (position:relative).
    Travels with the moment as part of the single marker element. */

@@ -185,17 +185,19 @@ function createMomentEl(moment) {
 
   const el = document.createElement('div');
   el.innerHTML = `
-    <div class="mc2">
+    <div class="mc2${photos.length === 0 ? ' mc2--no-photo' : ''}">
+      <div class="mc2-avatar-col">
+        <div class="mc2-avatar">
+          <img src="${avatar}" alt="" />
+        </div>
+      </div>
       <div class="mc2-content">
         ${photosHtml}
         <div class="mc2-bubble">
           <span class="mc2-text">${text}<span class="mc2-time">${time}</span></span>
         </div>
       </div>
-      <div class="mc2-avatar">
-        <img src="${avatar}" alt="" />
-      </div>
-      <div class="mc2-dot"></div>
+      ${photos.length > 0 ? '<div class="mc2-dot"></div>' : ''}
     </div>`;
   // Outer el is Mapbox's positioning anchor — never animate it, never block clicks.
   // All visual animation happens on the inner .mc2 child.
@@ -598,10 +600,12 @@ export default function MapFeed({ onRecord, recording, newMoment }) {
         mc2.style.transform  = 'scale(1) translateY(0)';
       }));
 
-      // Sticker analysis based on text + image content
-      analyzeMoment(text, image ?? null)
-        .then(data => injectStickers(el, getStickerLayout(data.stickers, data.placement, photoCount)))
-        .catch(() => injectStickers(el, getFallbackLayout(text, photoCount)));
+      // Sticker analysis — skip entirely when no photo
+      if (image) {
+        analyzeMoment(text, image)
+          .then(data => injectStickers(el, getStickerLayout(data.stickers, data.placement, photoCount)))
+          .catch(() => injectStickers(el, getFallbackLayout(text, photoCount)));
+      }
 
       // Fly to the new moment and re-cluster
       map.flyTo({ center: lngLat, zoom: 16, duration: 900, essential: true });
