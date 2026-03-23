@@ -103,9 +103,8 @@ body {
 }
 
 /* ── Moment card v2 ─────────────────────────────────────────────── */
-/* Vertical stack: [bubble cluster] on top, [avatar] at the bottom.
-   Mapbox anchor is bottom-left → avatar bottom-left = coordinate.
-   Everything is one marker element; bubble rises directly above pin. */
+/* Vertical stack: bubble cluster on top, avatar pin at the bottom.
+   Mapbox anchor bottom-left → avatar bottom-left = coordinate.     */
 .mc2 {
   display: flex;
   flex-direction: column;
@@ -114,7 +113,7 @@ body {
   pointer-events: none;
   filter: drop-shadow(0 2px 8px rgba(0,0,0,0.12));
 }
-/* Avatar: the map pin. Always bottom-left of the marker.            */
+/* Avatar: the map pin. Bottom-left of the whole marker.             */
 .mc2-avatar {
   width: 36px;
   height: 36px;
@@ -128,27 +127,28 @@ body {
   object-fit: cover;
   display: block;
 }
-/* Tail dot: sits between bubble and avatar in normal flow.
-   margin-left = 10(content offset) + 4 = 14px → center at 18px
-   = exactly over the avatar's center (36px / 2 = 18px).            */
+/* Dot: absolutely positioned on mc2 at the avatar's top-right.
+   Fixed coordinates → gap to bubble never changes with bubble width.
+   Part of the speech bubble layer; sits above and right of avatar.  */
 .mc2-dot {
+  position: absolute;
+  left: 24px;
+  bottom: 32px;   /* straddles avatar top — half above, half inside */
   width: 8px;
   height: 8px;
   background: white;
   border-radius: 50%;
-  margin-top: 3px;
-  margin-left: 14px;
-  flex-shrink: 0;
+  z-index: 2;
 }
-/* Bubble cluster: photos → bubble → tail, offset right so tail
-   centres over the avatar.                                          */
+/* Bubble cluster: offset right so it floats above the avatar.
+   margin-bottom is fixed → constant gap regardless of bubble width. */
 .mc2-content {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   width: 150px;
   margin-left: 10px;
-  margin-bottom: -2px;
+  margin-bottom: 6px;
   position: relative;
 }
 /* 2+ images: bottom-aligned row, photos centered above the bubble. */
@@ -242,6 +242,7 @@ body {
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
   flex-shrink: 0;
   width: fit-content;
+  min-width: 64px;
   max-width: 150px;
   position: relative;
   z-index: 1;

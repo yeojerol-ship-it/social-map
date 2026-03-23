@@ -191,11 +191,11 @@ function createMomentEl(moment) {
         <div class="mc2-bubble">
           <span class="mc2-text">${text}<span class="mc2-time">${time}</span></span>
         </div>
-        <div class="mc2-dot"></div>
       </div>
       <div class="mc2-avatar">
         <img src="${avatar}" alt="" />
       </div>
+      <div class="mc2-dot"></div>
     </div>`;
   // Outer el is Mapbox's positioning anchor — never animate it, never block clicks.
   // All visual animation happens on the inner .mc2 child.
