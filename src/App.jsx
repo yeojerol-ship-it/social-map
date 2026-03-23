@@ -228,8 +228,14 @@ export default function App() {
       setMicMode('exit');
       micTimerRef.current = setTimeout(() => setMicMode('hidden'), 220);
     };
-    window.addEventListener('pointerup', stop);
-    return () => window.removeEventListener('pointerup', stop);
+    window.addEventListener('pointerup',     stop);
+    window.addEventListener('touchend',      stop, { passive: true });
+    window.addEventListener('pointercancel', stop);
+    return () => {
+      window.removeEventListener('pointerup',     stop);
+      window.removeEventListener('touchend',      stop);
+      window.removeEventListener('pointercancel', stop);
+    };
   }, [recording]);
 
   const go = (s) => setScreen(s);
@@ -248,7 +254,7 @@ export default function App() {
       <div style={{
         position: 'relative',
         width: '100%', height: '100%',
-        maxWidth: 390, maxHeight: 844,
+        maxWidth: 390,
         overflow: 'hidden',
         background: '#000', flexShrink: 0,
       }}>

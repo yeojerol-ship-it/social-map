@@ -48,7 +48,7 @@ export default function RecordingStart({ onRelease }) {
       </div>
 
       {/* Release hint */}
-      <div className="absolute bottom-[80px] left-0 w-full flex justify-center">
+      <div className="absolute left-0 w-full flex justify-center" style={{ bottom: 'max(80px, calc(46px + env(safe-area-inset-bottom)))' }}>
         <span className="text-[14px] font-semibold" style={{ color: 'rgba(0,0,0,0.65)' }}>
           松手停止录制
         </span>
