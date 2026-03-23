@@ -66,7 +66,7 @@ function RecordingOverlay({ liveText }) {
 
       {/* Transcript or placeholder */}
       <div style={{
-        position: 'absolute', top: 163, left: 0, width: '100%',
+        position: 'absolute', top: 110, left: 0, width: '100%',
         display: 'flex', justifyContent: 'center', padding: '0 40px',
         opacity: entered ? 1 : 0,
         transition: 'opacity 0.25s ease',
@@ -75,6 +75,9 @@ function RecordingOverlay({ liveText }) {
           fontSize: 24, fontWeight: 600, lineHeight: 1.3,
           color: liveText ? 'rgba(0,0,0,0.65)' : 'rgba(0,0,0,0.34)',
           maxWidth: 300, textAlign: 'center',
+          background: 'rgba(246,244,234,0.72)',
+          borderRadius: 14,
+          padding: '6px 16px',
         }}>
           {liveText || '说一说'}
         </span>
@@ -190,17 +193,13 @@ export default function App() {
           }, 150);
         }
       };
-      // Request mic permission explicitly before starting (required on iOS Safari)
-      navigator.mediaDevices?.getUserMedia({ audio: true })
-        .then(() => {
-          if (recognitionRef.current) return; // already stopped
-          recognition.start();
-          recognitionRef.current = recognition;
-        })
-        .catch(() => {
-          // Permission denied or not available — fall back to simulation
-          recognitionRef.current = null;
-        });
+      // iOS Safari: recognition.start() MUST be called synchronously inside the
+      // user-gesture handler. Calling it inside a Promise .then() breaks the
+      // gesture context and silently prevents recognition from starting.
+      // getUserMedia fires in parallel only to warm up the permission dialog.
+      navigator.mediaDevices?.getUserMedia({ audio: true }).catch(() => {});
+      try { recognition.start(); } catch (_) {}
+      recognitionRef.current = recognition;
     }
   }, [recording]);
 
