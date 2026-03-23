@@ -43,9 +43,9 @@ export const STICKER_IDS = Object.keys(STICKER_PACK);
 const PLACEMENTS = {
   // Two-photo: touch top-left, top-right, bottom-right corners of the photo area.
   'around-image': [
-    { x: 162, y:  12, rot:  16 },           // top-right  (183−17=166 → 162 w/ rot nudge)
-    { x:  46, y:  14, rot: -18 },           // top-left   (66−17=49  → 46 w/ rot nudge)
-    { x: 160, y:  90, rot:  -8, size: 30 }, // bottom-right (183−15=168 → 160 w/ rot nudge)
+    { x: 174, y:  22, rot:  16 },           // top-right
+    { x:  54, y:  22, rot: -18 },           // top-left
+    { x: 168, y:  98, rot:  -8, size: 30 }, // bottom-right
   ],
   // Single-photo: photo centred in content ≈ x:86–157, y:44–115.
   'around-image-1': [
