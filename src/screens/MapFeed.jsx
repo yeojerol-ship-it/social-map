@@ -186,17 +186,15 @@ function createMomentEl(moment) {
   const el = document.createElement('div');
   el.innerHTML = `
     <div class="mc2">
-      <div class="mc2-avatar-col">
-        <div class="mc2-avatar">
-          <img src="${avatar}" alt="" />
-        </div>
-      </div>
       <div class="mc2-content">
         ${photosHtml}
         <div class="mc2-bubble">
-          <div class="mc2-dot"></div>
           <span class="mc2-text">${text}<span class="mc2-time">${time}</span></span>
         </div>
+        <div class="mc2-dot"></div>
+      </div>
+      <div class="mc2-avatar">
+        <img src="${avatar}" alt="" />
       </div>
     </div>`;
   // Outer el is Mapbox's positioning anchor — never animate it, never block clicks.
