@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <defs>
+    <radialGradient id="moonGrad" cx="35%" cy="28%" r="70%" fx="35%" fy="28%">
+      <stop offset="0%" stop-color="#fff9c4"/>
+      <stop offset="40%" stop-color="#ffd94a"/>
+      <stop offset="100%" stop-color="#c97b00"/>
+    </radialGradient>
+    <radialGradient id="moonAO" cx="72%" cy="68%" r="50%">
+      <stop offset="0%" stop-color="#7a4800" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#7a4800" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="moonShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#8a5500" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- White die-cut outline -->
+  <path d="M88 18 C58 18 32 42 32 72 C32 102 56 126 88 126 C99 126 109 122 117 116 C105 120 84 116 72 101 C59 86 58 66 64 50 C70 34 83 23 98 20 C95 19 92 18 88 18 Z"
+        fill="white" stroke="white" stroke-width="14" stroke-linejoin="round"
+        paint-order="stroke fill" filter="url(#moonShadow)"/>
+
+  <!-- Moon crescent body -->
+  <path d="M88 18 C58 18 32 42 32 72 C32 102 56 126 88 126 C99 126 109 122 117 116 C105 120 84 116 72 101 C59 86 58 66 64 50 C70 34 83 23 98 20 C95 19 92 18 88 18 Z"
+        fill="url(#moonGrad)"/>
+
+  <!-- Ambient occlusion inner edge -->
+  <path d="M88 18 C58 18 32 42 32 72 C32 102 56 126 88 126 C99 126 109 122 117 116 C105 120 84 116 72 101 C59 86 58 66 64 50 C70 34 83 23 98 20 C95 19 92 18 88 18 Z"
+        fill="url(#moonAO)"/>
+
+  <!-- Specular highlight top-left -->
+  <ellipse cx="56" cy="50" rx="16" ry="10" fill="white" opacity="0.62" transform="rotate(-25 56 50)"/>
+
+  <!-- Small floating star dots (no outline) -->
+  <circle cx="122" cy="38" r="5" fill="white" opacity="0.9"/>
+  <circle cx="132" cy="65" r="3.5" fill="white" opacity="0.75"/>
+  <circle cx="116" cy="24" r="3" fill="white" opacity="0.8"/>
+</svg>

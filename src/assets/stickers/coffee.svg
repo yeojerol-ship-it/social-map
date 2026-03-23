@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <defs>
+    <!-- Cup body gradient -->
+    <radialGradient id="cupGrad" cx="32%" cy="28%" r="70%" fx="32%" fy="28%">
+      <stop offset="0%" stop-color="#fff8ee"/>
+      <stop offset="45%" stop-color="#f5ddb0"/>
+      <stop offset="100%" stop-color="#c49a52"/>
+    </radialGradient>
+    <!-- Coffee surface gradient -->
+    <radialGradient id="coffeeGrad" cx="38%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#7a4a28"/>
+      <stop offset="100%" stop-color="#3b1e0a"/>
+    </radialGradient>
+    <!-- Handle gradient -->
+    <radialGradient id="handleGrad" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#e8b06a"/>
+      <stop offset="100%" stop-color="#a0621e"/>
+    </radialGradient>
+    <!-- Saucer gradient -->
+    <radialGradient id="saucerGrad" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#f0c07a"/>
+      <stop offset="100%" stop-color="#9a6020"/>
+    </radialGradient>
+    <filter id="cupShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#5a3010" flood-opacity="0.45"/>
+    </filter>
+    <filter id="steamBlur">
+      <feGaussianBlur stdDeviation="1.2"/>
+    </filter>
+  </defs>
+
+  <!-- Steam wisps -->
+  <path d="M62 46 Q56 38 60 30 Q64 22 58 15" stroke="#d4b896" stroke-width="4" fill="none"
+        stroke-linecap="round" opacity="0.7" filter="url(#steamBlur)"/>
+  <path d="M80 42 Q74 34 78 26 Q82 18 76 11" stroke="#d4b896" stroke-width="4" fill="none"
+        stroke-linecap="round" opacity="0.6" filter="url(#steamBlur)"/>
+  <path d="M98 46 Q92 38 96 30 Q100 22 94 15" stroke="#d4b896" stroke-width="4" fill="none"
+        stroke-linecap="round" opacity="0.7" filter="url(#steamBlur)"/>
+
+  <!-- Saucer -->
+  <ellipse cx="80" cy="136" rx="52" ry="11" fill="white" stroke="white" stroke-width="14"
+           paint-order="stroke fill" filter="url(#cupShadow)"/>
+  <ellipse cx="80" cy="136" rx="52" ry="11" fill="url(#saucerGrad)"/>
+  <ellipse cx="80" cy="134" rx="30" ry="5" fill="#b8832e" opacity="0.35"/>
+
+  <!-- Cup body — white die-cut outline -->
+  <path d="M38 60 L44 130 Q44 134 48 134 L112 134 Q116 134 116 130 L122 60 Z"
+        fill="white" stroke="white" stroke-width="14" stroke-linejoin="round"
+        paint-order="stroke fill" filter="url(#cupShadow)"/>
+  <!-- Cup body fill -->
+  <path d="M38 60 L44 130 Q44 134 48 134 L112 134 Q116 134 116 130 L122 60 Z"
+        fill="url(#cupGrad)"/>
+
+  <!-- Handle — white outline -->
+  <path d="M118 74 Q142 74 142 97 Q142 120 118 120"
+        stroke="white" stroke-width="16" fill="none" stroke-linecap="round"
+        paint-order="stroke fill"/>
+  <!-- Handle fill -->
+  <path d="M118 74 Q138 74 138 97 Q138 120 118 120"
+        stroke="url(#handleGrad)" stroke-width="9" fill="none" stroke-linecap="round"/>
+
+  <!-- Coffee surface ellipse -->
+  <ellipse cx="80" cy="63" rx="42" ry="12" fill="white" stroke="white" stroke-width="5"
+           paint-order="stroke fill"/>
+  <ellipse cx="80" cy="63" rx="42" ry="12" fill="url(#coffeeGrad)"/>
+
+  <!-- Latte art — simple swirl on surface -->
+  <path d="M80 61 C72 57 62 59 62 63 C62 67 72 69 80 65 C88 61 94 57 94 63 C94 67 88 70 80 68"
+        stroke="#c07840" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.75"/>
+
+  <!-- Coffee surface specular -->
+  <ellipse cx="66" cy="59" rx="12" ry="5" fill="white" opacity="0.3" transform="rotate(-10 66 59)"/>
+
+  <!-- Cup body specular highlight -->
+  <ellipse cx="56" cy="88" rx="9" ry="22" fill="white" opacity="0.38" transform="rotate(-5 56 88)"/>
+
+  <!-- Cup AO bottom crease -->
+  <path d="M46 128 Q80 122 114 128" stroke="#8a5a20" stroke-width="3" fill="none"
+        stroke-linecap="round" opacity="0.3"/>
+</svg>

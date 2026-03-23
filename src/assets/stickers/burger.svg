@@ -1,0 +1,28 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- top bun shadow -->
+  <ellipse cx="33" cy="19" rx="22" ry="14" fill="#B5651D" opacity="0.25"/>
+  <!-- top bun -->
+  <path d="M10 22 Q10 6 32 6 Q54 6 54 22 Z" fill="#E8913A" stroke="white" stroke-width="3" stroke-linejoin="round"/>
+  <!-- sesame seeds on bun -->
+  <ellipse cx="26" cy="12" rx="3.5" ry="2"   fill="#FFDEA0" transform="rotate(-20 26 12)"/>
+  <ellipse cx="36" cy="10" rx="3"   ry="1.8" fill="#FFDEA0" transform="rotate(10 36 10)"/>
+  <ellipse cx="44" cy="14" rx="3"   ry="1.8" fill="#FFDEA0" transform="rotate(-10 44 14)"/>
+  <!-- bun shine -->
+  <ellipse cx="24" cy="11" rx="6" ry="3" fill="white" opacity="0.22" transform="rotate(-15 24 11)"/>
+  <!-- bun lower edge -->
+  <rect x="10" y="21" width="44" height="4" rx="0" fill="#E8913A"/>
+  <path d="M10 22 L54 22" stroke="white" stroke-width="2.5"/>
+  <!-- lettuce -->
+  <path d="M8 26 Q16 22 24 26 Q32 30 40 26 Q48 22 56 26" fill="#5CB85C" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- cheese slice -->
+  <rect x="9" y="27" width="46" height="5" rx="1" fill="#FFD600" stroke="white" stroke-width="2"/>
+  <!-- patty -->
+  <rect x="10" y="32" width="44" height="9" rx="3" fill="#7B3F00" stroke="white" stroke-width="2.5"/>
+  <!-- patty grill marks -->
+  <path d="M16 35 L28 35" stroke="#5A2D00" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+  <path d="M16 38 L28 38" stroke="#5A2D00" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+  <!-- tomato slice -->
+  <rect x="9" y="41" width="46" height="4" rx="1" fill="#E53935" stroke="white" stroke-width="2"/>
+  <!-- bottom bun -->
+  <path d="M10 45 Q10 55 32 55 Q54 55 54 45 Z" fill="#F0A050" stroke="white" stroke-width="3" stroke-linejoin="round"/>
+</svg>

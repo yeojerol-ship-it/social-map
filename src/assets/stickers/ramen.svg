@@ -1,0 +1,20 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- steam -->
+  <path d="M22 18 Q20 13 22 8" stroke="#FFB74D" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.8"/>
+  <path d="M32 16 Q30 11 32 6" stroke="#FFB74D" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.8"/>
+  <path d="M42 18 Q40 13 42 8" stroke="#FFB74D" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.8"/>
+  <!-- bowl body -->
+  <path d="M8 28 Q8 56 32 56 Q56 56 56 28 Z" fill="#E53935" stroke="white" stroke-width="3.5" stroke-linejoin="round"/>
+  <!-- bowl rim -->
+  <rect x="8" y="22" width="48" height="10" rx="5" fill="#EF5350" stroke="white" stroke-width="3.5"/>
+  <!-- broth surface -->
+  <ellipse cx="32" cy="29" rx="20" ry="6" fill="#FF8F00" stroke="white" stroke-width="2"/>
+  <!-- noodle squiggle -->
+  <path d="M18 29 Q22 24 28 29 Q34 34 40 29 Q44 26 46 29" stroke="#FFF8E1" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- egg half -->
+  <circle cx="38" cy="34" r="5" fill="#FAFAFA" stroke="white" stroke-width="1.5"/>
+  <circle cx="38" cy="34" r="3" fill="#FFB300" opacity="0.9"/>
+  <!-- naruto topping -->
+  <circle cx="23" cy="34" r="4" fill="#FAFAFA" stroke="white" stroke-width="1.5"/>
+  <circle cx="23" cy="34" r="2" fill="#FF80AB"/>
+</svg>

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <defs>
+    <radialGradient id="leafGrad" cx="35%" cy="28%" r="70%" fx="35%" fy="28%">
+      <stop offset="0%" stop-color="#a8e6b0"/>
+      <stop offset="40%" stop-color="#3cb371"/>
+      <stop offset="100%" stop-color="#1a5c32"/>
+    </radialGradient>
+    <radialGradient id="leafAO" cx="65%" cy="78%" r="55%">
+      <stop offset="0%" stop-color="#0d3a1a" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#0d3a1a" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Right half lighter for 3D roundness -->
+    <linearGradient id="leafSheen" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#1a7a40" stop-opacity="0.0"/>
+      <stop offset="60%" stop-color="#7de89a" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#7de89a" stop-opacity="0.0"/>
+    </linearGradient>
+    <filter id="leafShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#0f4020" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <!-- White die-cut outline -->
+  <path d="M80 142 C56 130 20 108 20 72 C20 44 40 20 80 22 C120 20 140 44 140 72 C140 108 104 130 80 142 Z"
+        fill="white" stroke="white" stroke-width="14" stroke-linejoin="round"
+        paint-order="stroke fill" filter="url(#leafShadow)"/>
+
+  <!-- Main leaf body -->
+  <path d="M80 142 C56 130 20 108 20 72 C20 44 40 20 80 22 C120 20 140 44 140 72 C140 108 104 130 80 142 Z"
+        fill="url(#leafGrad)"/>
+
+  <!-- Right-side sheen for roundness -->
+  <path d="M80 142 C56 130 20 108 20 72 C20 44 40 20 80 22 C120 20 140 44 140 72 C140 108 104 130 80 142 Z"
+        fill="url(#leafSheen)"/>
+
+  <!-- Ambient occlusion bottom -->
+  <path d="M80 142 C56 130 20 108 20 72 C20 44 40 20 80 22 C120 20 140 44 140 72 C140 108 104 130 80 142 Z"
+        fill="url(#leafAO)"/>
+
+  <!-- Midrib vein -->
+  <line x1="80" y1="140" x2="80" y2="24" stroke="white" stroke-width="3.5"
+        stroke-linecap="round" opacity="0.65"/>
+
+  <!-- Lateral veins — left side -->
+  <path d="M80 52 Q66 46 56 50" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M80 70 Q64 62 52 67" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M80 88 Q66 80 56 84" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.45"/>
+  <path d="M80 106 Q68 98 60 102" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"/>
+
+  <!-- Lateral veins — right side -->
+  <path d="M80 60 Q96 54 106 58" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.45"/>
+  <path d="M80 78 Q96 70 108 74" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.45"/>
+  <path d="M80 96 Q94 88 104 92" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.4"/>
+
+  <!-- Specular highlight top-left -->
+  <ellipse cx="60" cy="48" rx="20" ry="12" fill="white" opacity="0.58" transform="rotate(-25 60 48)"/>
+
+  <!-- Dew drop -->
+  <ellipse cx="112" cy="68" rx="7" ry="9" fill="white" opacity="0.38" transform="rotate(-15 112 68)"/>
+  <ellipse cx="111" cy="66" rx="3" ry="4" fill="white" opacity="0.6" transform="rotate(-15 111 66)"/>
+</svg>

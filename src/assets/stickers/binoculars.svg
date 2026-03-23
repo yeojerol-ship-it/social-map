@@ -1,0 +1,25 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- bridge -->
+  <rect x="24" y="26" width="16" height="9" rx="3" fill="#E8720C" stroke="white" stroke-width="3.5" stroke-linejoin="round"/>
+  <!-- left barrel -->
+  <rect x="7" y="21" width="19" height="22" rx="7" fill="#E8720C" stroke="white" stroke-width="3.5"/>
+  <!-- right barrel -->
+  <rect x="38" y="21" width="19" height="22" rx="7" fill="#E8720C" stroke="white" stroke-width="3.5"/>
+  <!-- left grip band -->
+  <rect x="10" y="27" width="13" height="4" rx="2" fill="#C45A08" opacity="0.7"/>
+  <!-- right grip band -->
+  <rect x="41" y="27" width="13" height="4" rx="2" fill="#C45A08" opacity="0.7"/>
+  <!-- left lens ring -->
+  <circle cx="16.5" cy="40" r="6.5" fill="#1C2340" stroke="white" stroke-width="2.5"/>
+  <circle cx="16.5" cy="40" r="4.5" fill="#263080"/>
+  <circle cx="16.5" cy="40" r="2.5" fill="#4B6CF5" opacity="0.8"/>
+  <circle cx="14.5" cy="38" r="1.2" fill="white" opacity="0.55"/>
+  <!-- right lens ring -->
+  <circle cx="47.5" cy="40" r="6.5" fill="#1C2340" stroke="white" stroke-width="2.5"/>
+  <circle cx="47.5" cy="40" r="4.5" fill="#263080"/>
+  <circle cx="47.5" cy="40" r="2.5" fill="#4B6CF5" opacity="0.8"/>
+  <circle cx="45.5" cy="38" r="1.2" fill="white" opacity="0.55"/>
+  <!-- top highlight stripe on barrels -->
+  <rect x="9" y="23" width="15" height="3" rx="1.5" fill="white" opacity="0.25"/>
+  <rect x="40" y="23" width="15" height="3" rx="1.5" fill="white" opacity="0.25"/>
+</svg>

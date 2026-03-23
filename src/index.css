@@ -1,0 +1,434 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Leaflet core */
+@import "leaflet/dist/leaflet.css";
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, 'SF Pro Text', sans-serif;
+}
+
+body {
+  background: #f6f4ea;
+}
+
+/* ── Leaflet overrides ──────────────────────────────────────────── */
+.leaflet-container {
+  /* MapContainer is inside a position:absolute div that owns the layout.
+     These ensure it fills that wrapper completely. */
+  width: 100%;
+  height: 100%;
+  background: #f6f4ea;
+}
+
+/* Remove default leaflet marker interference */
+.leaflet-div-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* ── Moment card marker ────────────────────────────────────────── */
+/* Matches Figma node 230:8164 — group frame 180×148px           */
+.mc {
+  position: relative;
+  width: 180px;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.12));
+}
+
+/* Photos area — 180px wide, photos overflow top freely */
+.mc-photos {
+  position: relative;
+  width: 180px;
+  height: 90px;
+}
+/* Photo 1: outer div center at (77, 47) in group → corner at (44, 14) */
+.mc-p1 {
+  position: absolute;
+  left: 44px; top: 14px;
+  transform: rotate(-12deg);
+}
+.mc-p1 img {
+  width: 57px; height: 57px;
+  border-radius: 12px;
+  border: 2px solid #f6f4ea;
+  object-fit: cover;
+  display: block;
+}
+/* Photo 2: outer div center at (126, 44) in group → corner at (87, 5) */
+.mc-p2 {
+  position: absolute;
+  left: 87px; top: 5px;
+  transform: rotate(10deg);
+}
+.mc-p2 img {
+  width: 67px; height: 67px;
+  border-radius: 12px;
+  border: 2px solid #f6f4ea;
+  object-fit: cover;
+  display: block;
+}
+/* Emoji sticker: center at (53, 23) → img corner at (34, 4) */
+.mc-emoji {
+  position: absolute;
+  left: 34px; top: 4px;
+  width: 38px; height: 38px;
+  object-fit: contain;
+  transform: rotate(-12.2deg);
+}
+/* Ramen sticker: outer div at (141, 37), inner 29×44px */
+.mc-ramen {
+  position: absolute;
+  left: 144px; top: 39px;
+  width: 29px; height: 44px;
+  object-fit: contain;
+  transform: rotate(6.75deg);
+}
+
+/* ── Moment card v2 (Figma 233:8570/8582/8594) ─────────────────── */
+/* Outer flex row: avatar column (149px, items-end) + content col  */
+.mc2 {
+  display: flex;
+  align-items: center;      /* centers content col at y=31px in 149px height */
+  padding-right: 2px;
+  position: relative;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.12));
+}
+/* Avatar column — fixed height so avatar sits below the bubble (thought bubble effect) */
+.mc2-avatar-col {
+  display: flex;
+  min-height: 149px;
+  align-items: flex-end;
+  margin-right: -2px;
+  flex-shrink: 0;
+}
+/* Avatar circle — img fills it absolutely; dot sits top-right via padding */
+.mc2-avatar {
+  display: flex;
+  align-items: flex-start;
+  padding: 4px 3px 24px 25px;
+  border-radius: 100px;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  position: relative;
+  overflow: hidden;
+}
+.mc2-avatar img {
+  position: absolute;
+  inset: 0;
+  object-fit: cover;
+  border-radius: 100px;
+  width: 100%;
+  height: 100%;
+}
+.mc2-dot {
+  background: white;
+  border-radius: 100px;
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  position: relative;
+  z-index: 1;
+}
+/* Content column — stacks photos then bubble; width drives component size.
+   padding-bottom:20px pushes bubble up so it sits above the avatar (thought bubble). */
+.mc2-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  width: 160px;
+  padding-bottom: 20px;
+  position: relative;
+}
+/* 2+ images: bottom-aligned row, photos centered above the bubble. */
+.mc2-photos-2 {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 100%;
+  position: relative;
+  z-index: 0;
+}
+/* Flex-center wrappers give each rotated image a stable bounding box.
+   mr:-28px makes the next photo overlap by 28px horizontally. */
+.mc2-p1-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: -28px;
+  flex-shrink: 0;
+  width: 67.561px;
+  height: 67.561px;
+}
+.mc2-p1-inner { transform: rotate(-12deg); flex-shrink: 0; }
+.mc2-p1-img {
+  border: 2px solid #f6f4ea;
+  border-radius: 12px;
+  width: 56.963px;
+  height: 56.963px;
+  object-fit: cover;
+  display: block;
+}
+.mc2-p2-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: -28px;
+  flex-shrink: 0;
+  width: 77.757px;
+  height: 77.757px;
+}
+.mc2-p2-inner { transform: rotate(10.12deg); flex-shrink: 0; }
+.mc2-p2-img {
+  border: 2px solid #f6f4ea;
+  border-radius: 12px;
+  width: 67.019px;
+  height: 67.019px;
+  object-fit: cover;
+  display: block;
+}
+/* 1 image: centered, z-index:1 for same reason */
+.mc2-photos-1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 100%;
+  position: relative;
+  z-index: 0;
+}
+.mc2-p-single-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 71.531px;
+  height: 71.531px;
+}
+.mc2-p-single-inner { transform: rotate(4deg); flex-shrink: 0; }
+.mc2-p-single-img {
+  border: 2px solid #f6f4ea;
+  border-radius: 12px;
+  width: 67.019px;
+  height: 67.019px;
+  object-fit: cover;
+  display: block;
+}
+/* No image — empty spacer matching 1-image photos height */
+.mc2-photos-0 {
+  height: 71.531px;
+  flex-shrink: 0;
+  width: 100%;
+}
+/* Bubble — hugs content, grows to 160px max. Time is inline so it always
+   sits on the same line as the last word, 4px after it. */
+.mc2-bubble {
+  backdrop-filter: blur(4.35px);
+  -webkit-backdrop-filter: blur(4.35px);
+  background: white;
+  border: 1px solid rgba(255,255,255,0.4);
+  display: block;
+  margin-top: -20px;
+  padding: 6px 8px;
+  border-radius: 12px 12px 12px 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  flex-shrink: 0;
+  width: fit-content;
+  max-width: 160px;
+  position: relative;
+  z-index: 1;
+}
+/* Sticker — absolutely positioned within .mc2 (position:relative).
+   Travels with the moment as part of the single marker element. */
+.mc2-sticker {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+  z-index: 2;
+}
+/* Die-cut sticker look: the SVGs already have white stroke outlines baked in.
+   The drop-shadow adds depth underneath the whole sticker. */
+.mc2-sticker-img {
+  width: 34px;
+  height: 34px;
+  display: block;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.22));
+}
+/* Text wraps at bubble width; no fixed white-space */
+.mc2-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0,0,0,0.65);
+  line-height: 1.3;
+}
+/* Time — inline after last word, 4px gap, never wraps */
+.mc2-time {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(0,0,0,0.48);
+  line-height: 1.3;
+  white-space: nowrap;
+  margin-left: 4px;
+}
+
+/* Avatar + dot + bubble row — avatar bottom-aligned with bubble */
+.mc-footer {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  margin-top: 2px;
+}
+.mc-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 2px solid white;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.mc-avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.mc-bubble-wrap {
+  position: relative;
+}
+.mc-dot {
+  position: absolute;
+  left: -3px; bottom: -3px;
+  width: 7px; height: 7px;
+  background: white;
+  border-radius: 50%;
+}
+.mc-bubble {
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,0.4);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 6px 8px;
+  border-radius: 12px 12px 12px 8px;
+  max-width: 148px;
+}
+.mc-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(0,0,0,0.65);
+  line-height: 1.3;
+}
+.mc-time {
+  font-size: 11px;
+  color: rgba(0,0,0,0.48);
+  line-height: 1.3;
+  white-space: nowrap;
+  padding-left: 4px;
+}
+
+/* ── Live location marker (Mapbox) ─────────────────────────────── */
+/* Matches Figma node 230:8177 exactly.
+   Mapbox adds position:absolute + CSS transform via mapboxgl-marker class.
+   anchor:'center' keeps the dot center pinned to the GPS coordinate. */
+.loc-marker {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(89, 56, 255, 0.22);   /* Figma: rgba(89,56,255,0.22) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+.loc-marker-dot {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #5938ff;
+  border: 2px solid #f6f4ea;             /* Figma: border-[#f6f4ea] */
+  transform: rotate(-6.89deg);           /* Figma: rotate(-6.89deg) */
+  flex-shrink: 0;
+}
+@keyframes pulse {
+  0%, 100% { transform: scale(1);    opacity: 1;    }
+  50%       { transform: scale(1.08); opacity: 0.85; }
+}
+
+/* ── Social cluster marker ─────────────────────────────────────── */
+/* ONE object that replaces multiple individual moments when they
+   are close on screen. Individual moments are removed from the map
+   (marker.remove()) while this cluster is shown. */
+.sc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  pointer-events: auto;
+  filter: drop-shadow(0 4px 14px rgba(0,0,0,0.22));
+}
+/* Overlapping avatar row — each avatar nudged left by 12px */
+.sc-avatars {
+  display: flex;
+  align-items: center;
+}
+.sc-av {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid #F6F4EA;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #e0e0e0;
+  margin-left: -12px;
+}
+.sc-av:first-child { margin-left: 0; }
+.sc-av img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* Count pill — shows when group has more than 2 moments */
+.sc-count {
+  background: #5938FF;
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  border: 2px solid white;
+  line-height: 1.4;
+}
+
+/* ── Recording overlay animations ─────────────────────────────────── */
+@keyframes rec-pulse {
+  0%, 100% { transform: scale(1);    }
+  50%       { transform: scale(1.07); }
+}
+.rec-pulse-ring {
+  animation: rec-pulse 2.4s ease-in-out infinite;
+  transform-origin: center center;
+}
+
+/* ── Map UI chrome overrides ───────────────────────────────────── */
+/* Hide Leaflet controls (legacy) */
+.leaflet-control-zoom,
+.leaflet-control-attribution {
+  display: none !important;
+}
+/* Hide Mapbox logo + attribution for the prototype */
+.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-attrib {
+  display: none !important;
+}

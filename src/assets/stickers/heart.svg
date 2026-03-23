@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <defs>
+    <radialGradient id="heartGrad" cx="35%" cy="30%" r="70%" fx="35%" fy="30%">
+      <stop offset="0%" stop-color="#ff9ab5"/>
+      <stop offset="35%" stop-color="#ff3a5c"/>
+      <stop offset="100%" stop-color="#9c0022"/>
+    </radialGradient>
+    <radialGradient id="heartAO" cx="50%" cy="88%" r="55%">
+      <stop offset="0%" stop-color="#5a000f" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#5a000f" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="heartShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#7a0018" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <!-- White die-cut outline -->
+  <path d="M80 136 C78 134 18 96 18 57 C18 35 34 20 54 20 C65 20 74 25 80 34 C86 25 95 20 106 20 C126 20 142 35 142 57 C142 96 82 134 80 136 Z"
+        fill="white" stroke="white" stroke-width="14" stroke-linejoin="round"
+        paint-order="stroke fill" filter="url(#heartShadow)"/>
+
+  <!-- Main heart body -->
+  <path d="M80 136 C78 134 18 96 18 57 C18 35 34 20 54 20 C65 20 74 25 80 34 C86 25 95 20 106 20 C126 20 142 35 142 57 C142 96 82 134 80 136 Z"
+        fill="url(#heartGrad)"/>
+
+  <!-- Ambient occlusion — bottom shadow -->
+  <path d="M80 136 C78 134 18 96 18 57 C18 35 34 20 54 20 C65 20 74 25 80 34 C86 25 95 20 106 20 C126 20 142 35 142 57 C142 96 82 134 80 136 Z"
+        fill="url(#heartAO)"/>
+
+  <!-- Specular highlight top-left lobe -->
+  <ellipse cx="57" cy="46" rx="20" ry="13" fill="white" opacity="0.65" transform="rotate(-25 57 46)"/>
+</svg>

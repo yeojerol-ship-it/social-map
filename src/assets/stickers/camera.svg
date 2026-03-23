@@ -1,0 +1,15 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- strap -->
+  <path d="M20 20 Q32 14 44 20" stroke="#9C6FDE" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <!-- body -->
+  <rect x="8" y="24" width="48" height="32" rx="7" fill="#5938FF" stroke="white" stroke-width="3.5"/>
+  <!-- viewfinder bump -->
+  <rect x="22" y="16" width="20" height="10" rx="4" fill="#5938FF" stroke="white" stroke-width="3"/>
+  <!-- lens ring -->
+  <circle cx="32" cy="40" r="13" fill="#3D2AB0" stroke="white" stroke-width="3"/>
+  <circle cx="32" cy="40" r="9"  fill="#2E1F8F"/>
+  <circle cx="32" cy="40" r="6"  fill="#6EC6F5" opacity="0.85"/>
+  <circle cx="29" cy="37" r="2"  fill="white" opacity="0.5"/>
+  <!-- flash -->
+  <rect x="42" y="28" width="8" height="5" rx="2.5" fill="#FFD200" stroke="white" stroke-width="1.5"/>
+</svg>

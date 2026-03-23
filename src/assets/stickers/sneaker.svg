@@ -1,0 +1,25 @@
+<svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- sole shadow -->
+  <ellipse cx="33" cy="57" rx="25" ry="4" fill="#333" opacity="0.2"/>
+  <!-- outer sole -->
+  <path d="M6 50 Q6 58 18 58 L50 58 Q60 58 58 50 L54 42 Q52 40 46 40 L18 40 Q8 40 6 50 Z"
+        fill="#222" stroke="white" stroke-width="3" stroke-linejoin="round"/>
+  <!-- midsole stripe -->
+  <path d="M8 50 Q8 54 18 54 L50 54 Q57 54 56 50" fill="none" stroke="white" stroke-width="1.8" opacity="0.4"/>
+  <!-- upper body -->
+  <path d="M10 42 Q10 16 28 14 L48 14 Q56 14 56 22 L56 42 Z"
+        fill="#FF3B30" stroke="white" stroke-width="3" stroke-linejoin="round"/>
+  <!-- toe box -->
+  <path d="M10 42 Q6 38 10 34 Q14 28 20 28 L10 42 Z" fill="#D62B20" stroke="white" stroke-width="2.5" stroke-linejoin="round"/>
+  <!-- tongue tab -->
+  <path d="M30 14 L34 14 L36 26 L28 26 Z" fill="#CC2D24" stroke="white" stroke-width="2"/>
+  <!-- swoosh-style stripe -->
+  <path d="M16 36 Q28 28 46 30 Q52 31 54 34"
+        fill="none" stroke="white" stroke-width="3" stroke-linecap="round" opacity="0.85"/>
+  <!-- laces -->
+  <line x1="30" y1="16" x2="34" y2="16" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="29" y1="19" x2="35" y2="19" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="29" y1="22" x2="35" y2="22" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- heel highlight -->
+  <path d="M52 18 Q56 20 56 28" stroke="white" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.3"/>
+</svg>

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <defs>
+    <radialGradient id="sparkleGrad" cx="35%" cy="28%" r="70%" fx="35%" fy="28%">
+      <stop offset="0%" stop-color="#fff9c4"/>
+      <stop offset="35%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#b8860b"/>
+    </radialGradient>
+    <radialGradient id="sparkleAO" cx="65%" cy="70%" r="55%">
+      <stop offset="0%" stop-color="#7a5000" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#7a5000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="sparkleShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#a07000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- White die-cut outline -->
+  <path d="M80 12 L88 68 L148 80 L88 92 L80 148 L72 92 L12 80 L72 68 Z"
+        fill="white" stroke="white" stroke-width="14" stroke-linejoin="round"
+        paint-order="stroke fill" filter="url(#sparkleShadow)"/>
+
+  <!-- Main sparkle body -->
+  <path d="M80 12 L88 68 L148 80 L88 92 L80 148 L72 92 L12 80 L72 68 Z"
+        fill="url(#sparkleGrad)"/>
+
+  <!-- Left/bottom ambient occlusion face -->
+  <path d="M80 12 L72 68 L12 80 L80 80 Z" fill="#8b6914" opacity="0.22"/>
+  <path d="M80 148 L72 92 L12 80 L80 80 Z" fill="#6b4f00" opacity="0.20"/>
+
+  <!-- Ambient occlusion bottom-right -->
+  <path d="M80 12 L88 68 L148 80 L88 92 L80 148 L72 92 L12 80 L72 68 Z"
+        fill="url(#sparkleAO)"/>
+
+  <!-- Center bright diamond inner glow -->
+  <path d="M80 46 L84 76 L114 80 L84 84 L80 114 L76 84 L46 80 L76 76 Z"
+        fill="#fff9c4" opacity="0.5"/>
+
+  <!-- Center glint -->
+  <circle cx="80" cy="80" r="6" fill="white" opacity="0.8"/>
+
+  <!-- Specular highlight top-left ray -->
+  <ellipse cx="64" cy="58" rx="14" ry="8" fill="white" opacity="0.62" transform="rotate(-45 64 58)"/>
+</svg>

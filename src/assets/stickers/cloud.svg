@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <defs>
+    <radialGradient id="cloudGrad" cx="35%" cy="28%" r="70%" fx="35%" fy="28%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="50%" stop-color="#dff0ff"/>
+      <stop offset="100%" stop-color="#b8d8f5"/>
+    </radialGradient>
+    <radialGradient id="cloudAO" cx="50%" cy="90%" r="55%">
+      <stop offset="0%" stop-color="#4a7fa8" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#4a7fa8" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="cloudShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#3a6e9c" flood-opacity="0.4"/>
+    </filter>
+    <!-- Clip path to contain gradients within cloud shape -->
+    <clipPath id="cloudClip">
+      <path d="M28 108 Q14 108 14 94 Q14 82 26 80 Q24 76 24 72 Q24 58 36 54 Q36 40 50 36 Q56 30 66 30 Q74 22 86 22 Q100 22 108 32 Q120 32 128 42 Q136 48 136 60 Q144 64 146 74 Q148 86 140 94 Q134 106 120 108 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- White die-cut outline -->
+  <path d="M28 108 Q14 108 14 94 Q14 82 26 80 Q24 76 24 72 Q24 58 36 54 Q36 40 50 36 Q56 30 66 30 Q74 22 86 22 Q100 22 108 32 Q120 32 128 42 Q136 48 136 60 Q144 64 146 74 Q148 86 140 94 Q134 106 120 108 Z"
+        fill="white" stroke="white" stroke-width="14" stroke-linejoin="round"
+        paint-order="stroke fill" filter="url(#cloudShadow)"/>
+
+  <!-- Main cloud body -->
+  <path d="M28 108 Q14 108 14 94 Q14 82 26 80 Q24 76 24 72 Q24 58 36 54 Q36 40 50 36 Q56 30 66 30 Q74 22 86 22 Q100 22 108 32 Q120 32 128 42 Q136 48 136 60 Q144 64 146 74 Q148 86 140 94 Q134 106 120 108 Z"
+        fill="url(#cloudGrad)"/>
+
+  <!-- Ambient occlusion bottom -->
+  <path d="M28 108 Q14 108 14 94 Q14 82 26 80 Q24 76 24 72 Q24 58 36 54 Q36 40 50 36 Q56 30 66 30 Q74 22 86 22 Q100 22 108 32 Q120 32 128 42 Q136 48 136 60 Q144 64 146 74 Q148 86 140 94 Q134 106 120 108 Z"
+        fill="url(#cloudAO)"/>
+
+  <!-- Specular highlight top-left puff -->
+  <ellipse cx="62" cy="42" rx="22" ry="14" fill="white" opacity="0.68" transform="rotate(-15 62 42)"/>
+  <!-- Secondary highlight right puff -->
+  <ellipse cx="100" cy="50" rx="14" ry="9" fill="white" opacity="0.4" transform="rotate(10 100 50)"/>
+</svg>

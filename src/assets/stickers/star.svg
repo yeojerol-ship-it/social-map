@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160">
+  <defs>
+    <radialGradient id="starGrad" cx="35%" cy="28%" r="70%" fx="35%" fy="28%">
+      <stop offset="0%" stop-color="#fff9c4"/>
+      <stop offset="30%" stop-color="#ffd700"/>
+      <stop offset="100%" stop-color="#c97b00"/>
+    </radialGradient>
+    <radialGradient id="starAO" cx="60%" cy="75%" r="55%">
+      <stop offset="0%" stop-color="#7a4500" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#7a4500" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="starShadow" x="-25%" y="-25%" width="150%" height="150%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#a05c00" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <!-- White die-cut outline -->
+  <path d="M80 14 L95 56 L140 56 L105 82 L118 124 L80 100 L42 124 L55 82 L20 56 L65 56 Z"
+        fill="white" stroke="white" stroke-width="14" stroke-linejoin="round"
+        paint-order="stroke fill" filter="url(#starShadow)"/>
+
+  <!-- Main star body -->
+  <path d="M80 14 L95 56 L140 56 L105 82 L118 124 L80 100 L42 124 L55 82 L20 56 L65 56 Z"
+        fill="url(#starGrad)"/>
+
+  <!-- Left-face ambient occlusion -->
+  <path d="M80 14 L65 56 L20 56 L55 82 L42 124 L80 100 Z"
+        fill="#7a4500" opacity="0.18"/>
+
+  <!-- Ambient occlusion bottom -->
+  <path d="M80 14 L95 56 L140 56 L105 82 L118 124 L80 100 L42 124 L55 82 L20 56 L65 56 Z"
+        fill="url(#starAO)"/>
+
+  <!-- Specular highlight top-left -->
+  <ellipse cx="63" cy="46" rx="18" ry="11" fill="white" opacity="0.6" transform="rotate(-30 63 46)"/>
+</svg>
