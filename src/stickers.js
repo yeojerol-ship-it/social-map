@@ -32,26 +32,29 @@ export const STICKER_PACK = {
 export const STICKER_IDS = Object.keys(STICKER_PACK);
 
 // ─── Placement configs ────────────────────────────────────────────────────────
-// Positions are left/top offsets (px) relative to the .mc2 element.
-// mc2 layout: avatar-col ~44px wide (margin-right:-2px) → content starts at x≈42.
-// Photos centered in 160px column → stacked pair spans x≈63–x≈181, y≈0–78.
-// Stickers (40×40px) are placed at the photo-stack corners where image content
-// is sparse (due to rotation), so they frame rather than cover the photos.
+// Positions are left/top px offsets relative to .mc2 (position:relative).
+//
+// mc2 layout (horizontal flex, 169px tall):
+//   avatar-col: 36px wide, margin-right:-2px → content starts at x=34
+//   mc2-content: padding-left:6px, centred vertically → content top ≈ y=33
+//   Photos frame (2-photo): x≈66–183, y≈33–110  (width≈117, height≈78)
+//
+// Stickers are centred on each corner: left = corner_x − size/2
 const PLACEMENTS = {
-  // Two-photo layout: stacked pair spans x≈63–181, y≈0–78.
+  // Two-photo: touch top-left, top-right, bottom-right corners of the photo area.
   'around-image': [
-    { x: 148, y:  -8, rot:  16 }, // top-right — right photo's top-right corner
-    { x:  60, y:  10, rot: -18 }, // top-left  — left photo's top-left corner
-    { x: 155, y:  50, rot:  -8, size: 30 }, // bottom-right — slightly smaller
+    { x: 162, y:  12, rot:  16 },           // top-right  (183−17=166 → 162 w/ rot nudge)
+    { x:  46, y:  14, rot: -18 },           // top-left   (66−17=49  → 46 w/ rot nudge)
+    { x: 160, y:  90, rot:  -8, size: 30 }, // bottom-right (183−15=168 → 160 w/ rot nudge)
   ],
-  // Single-photo layout: 2 stickers only — top-left and bottom-right.
+  // Single-photo: photo centred in content ≈ x:86–157, y:44–115.
   'around-image-1': [
-    { x:  58, y:  10, rot: -18 }, // top-left
-    { x: 130, y:  50, rot:  -8, size: 30 }, // bottom-right
+    { x:  66, y:  26, rot: -18 }, // top-left
+    { x: 134, y:  96, rot:  -8, size: 30 }, // bottom-right
   ],
   'around-bubble': [
-    { x: 152, y: 66, rot: -14 }, // right of bubble
-    { x:  20, y: 60, rot:  14 }, // left of bubble
+    { x: 152, y: 66, rot: -14 },
+    { x:  20, y: 60, rot:  14 },
   ],
 };
 
