@@ -285,28 +285,6 @@ export default function App() {
         <MicHero mode={micMode} />
       </div>
 
-      {/* Dev nav */}
-      <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center', maxWidth: 420 }}>
-        {SCREENS.map((s) => (
-          <button key={s} onClick={() => go(s)} style={{
-            padding: '4px 10px', borderRadius: 99, fontSize: 11, fontWeight: 500,
-            cursor: 'pointer', transition: 'all 0.15s',
-            background: screen === s ? 'rgba(255,255,255,0.15)' : 'rgba(255,255,255,0.05)',
-            color: screen === s ? 'white' : 'rgba(255,255,255,0.4)',
-            border: screen === s ? '1px solid rgba(255,255,255,0.3)' : '1px solid rgba(255,255,255,0.08)',
-          }}>{s}</button>
-        ))}
-        <button
-          onPointerDown={() => startRec()}
-          style={{
-            padding: '4px 10px', borderRadius: 99, fontSize: 11, fontWeight: 500,
-            cursor: 'pointer', transition: 'all 0.15s', touchAction: 'none',
-            background: recording ? 'rgba(255,80,80,0.25)' : 'rgba(255,255,255,0.05)',
-            color: recording ? 'rgba(255,160,160,1)' : 'rgba(255,255,255,0.4)',
-            border: recording ? '1px solid rgba(255,80,80,0.4)' : '1px solid rgba(255,255,255,0.08)',
-          }}
-        >⏺ rec</button>
-      </div>
     </div>
   );
 }
