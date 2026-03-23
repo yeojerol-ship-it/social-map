@@ -44,8 +44,8 @@ const PLACEMENTS = {
   // Two-photo: touch top-left, top-right, bottom-right corners of the photo area.
   'around-image': [
     { x: 174, y:  22, rot:  16 },           // top-right
-    { x:  54, y:  22, rot: -18 },           // top-left
-    { x: 168, y:  98, rot:  -8, size: 30 }, // bottom-right
+    { x:  60, y:  27, rot: -18 },           // top-left
+    { x: 168, y:  88, rot:  -8, size: 30 }, // bottom-right
   ],
   // Single-photo: photo centred in content ≈ x:86–157, y:44–115.
   'around-image-1': [
