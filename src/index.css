@@ -293,6 +293,7 @@ body {
   width: 34px;
   height: 34px;
   display: block;
+  object-fit: contain;
   filter: drop-shadow(0 2px 5px rgba(0,0,0,0.22));
 }
 /* Text wraps at bubble width; no fixed white-space */
