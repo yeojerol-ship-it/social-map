@@ -16,7 +16,7 @@ const MIC_STYLES = {
   // button top = container_height - 88; mic bottom after scale(0.22) from bottom-origin = container - 209
   // need to move down: (container - 88 + 8) - (container - 209) = 113px → translateY(113px)
   map: {
-    transform:  'translateY(113px) scale(0.22) rotate(5.78deg)',
+    transform:  'translateY(129px) scale(0.22) rotate(5.78deg)',
     opacity:    1,
     transition: 'transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.3s ease',
   },
@@ -38,7 +38,7 @@ function MicHero({ mode }) {
     <div style={{
       position: 'absolute',
       left: -1, bottom: 209, width: 392, height: 475,
-      zIndex: 35, pointerEvents: 'none',
+      zIndex: 34, pointerEvents: 'none',
       transformOrigin: 'center bottom',
       ...MIC_STYLES[mode],
     }}>
@@ -61,7 +61,7 @@ function RecordingOverlay({ liveText }) {
   }, []);
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 30, overflow: 'hidden', touchAction: 'none' }}>
+    <div style={{ position: 'absolute', inset: 0, zIndex: 36, overflow: 'hidden', touchAction: 'none' }}>
       <StatusBar />
 
       {/* Transcript or placeholder */}
@@ -167,7 +167,7 @@ export default function App() {
       const recognition = new SpeechRecognition();
       recognition.continuous     = true;
       recognition.interimResults = true;
-      recognition.lang           = 'zh-CN';
+      recognition.lang           = navigator.language || 'zh-CN';
       recognition.onresult = (e) => {
         let text = '';
         for (let i = 0; i < e.results.length; i++) text += e.results[i][0].transcript;
@@ -176,8 +176,10 @@ export default function App() {
       };
       recognition.onerror = (e) => {
         // Auto-restart on recoverable errors (e.g. no-speech timeout)
-        if (e.error === 'no-speech' && recognitionRef.current) {
-          try { recognition.start(); } catch (_) {}
+        if ((e.error === 'no-speech' || e.error === 'audio-capture') && recognitionRef.current) {
+          setTimeout(() => {
+            if (recognitionRef.current) try { recognition.start(); } catch (_) {}
+          }, 150);
         }
       };
       recognition.onend = () => {
@@ -188,8 +190,17 @@ export default function App() {
           }, 150);
         }
       };
-      recognition.start();
-      recognitionRef.current = recognition;
+      // Request mic permission explicitly before starting (required on iOS Safari)
+      navigator.mediaDevices?.getUserMedia({ audio: true })
+        .then(() => {
+          if (recognitionRef.current) return; // already stopped
+          recognition.start();
+          recognitionRef.current = recognition;
+        })
+        .catch(() => {
+          // Permission denied or not available — fall back to simulation
+          recognitionRef.current = null;
+        });
     }
   }, [recording]);
 
