@@ -75,9 +75,6 @@ function RecordingOverlay({ liveText }) {
           fontSize: 24, fontWeight: 600, lineHeight: 1.3,
           color: liveText ? 'rgba(0,0,0,0.65)' : 'rgba(0,0,0,0.34)',
           maxWidth: 300, textAlign: 'center',
-          background: 'rgba(246,244,234,0.72)',
-          borderRadius: 14,
-          padding: '6px 16px',
         }}>
           {liveText || '说一说'}
         </span>
