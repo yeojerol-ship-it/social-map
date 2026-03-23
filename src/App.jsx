@@ -13,7 +13,7 @@ const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogni
 // ─── MicHero ──────────────────────────────────────────────────────────────────
 const MIC_STYLES = {
   map: {
-    transform:  'translateY(252px) scale(0.22) rotate(5.78deg)',
+    transform:  'translateY(270px) scale(0.22) rotate(5.78deg)',
     opacity:    1,
     transition: 'transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.3s ease',
   },
@@ -151,6 +151,10 @@ export default function App() {
   const startRec = useCallback(() => {
     if (recording) return;
     if (micTimerRef.current) clearTimeout(micTimerRef.current);
+
+    // Haptic feedback
+    navigator.vibrate?.(10);
+
     setRecording(true);
     setMicMode('recording');
     setLiveText('');
@@ -167,7 +171,18 @@ export default function App() {
         liveRef.current = text;
         setLiveText(text);
       };
-      recognition.onerror = (e) => console.warn('SpeechRecognition error', e.error);
+      recognition.onerror = (e) => {
+        // Auto-restart on recoverable errors (e.g. no-speech timeout)
+        if (e.error === 'no-speech' && recognitionRef.current) {
+          try { recognition.start(); } catch (_) {}
+        }
+      };
+      recognition.onend = () => {
+        // Restart if still recording (iOS stops after ~60s)
+        if (recognitionRef.current) {
+          try { recognition.start(); } catch (_) {}
+        }
+      };
       recognition.start();
       recognitionRef.current = recognition;
     }
@@ -192,8 +207,9 @@ export default function App() {
     if (!recording) return;
     const stop = () => {
       if (recognitionRef.current) {
-        recognitionRef.current.stop();
-        recognitionRef.current = null;
+        const r = recognitionRef.current;
+        recognitionRef.current = null; // clear first so onend doesn't restart
+        try { r.stop(); } catch (_) {}
       }
       const captured = liveRef.current.trim();
       setRecording(false);
