@@ -5,7 +5,17 @@
 /* Leaflet core */
 @import "leaflet/dist/leaflet.css";
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+*:focus { outline: none; }
 
 html, body, #root {
   width: 100%;
