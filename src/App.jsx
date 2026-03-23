@@ -13,7 +13,7 @@ const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogni
 // ─── MicHero ──────────────────────────────────────────────────────────────────
 const MIC_STYLES = {
   map: {
-    transform:  'translateY(270px) scale(0.22) rotate(5.78deg)',
+    transform:  'translateY(227px) scale(0.22) rotate(5.78deg)',
     opacity:    1,
     transition: 'transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.3s ease',
   },
@@ -254,7 +254,7 @@ export default function App() {
       <div style={{
         position: 'relative',
         width: '100%', height: '100%',
-        maxWidth: 390,
+        maxWidth: 390, maxHeight: 844,
         overflow: 'hidden',
         background: '#000', flexShrink: 0,
       }}>
