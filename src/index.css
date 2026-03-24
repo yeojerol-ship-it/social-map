@@ -321,8 +321,8 @@ body {
 /* Die-cut sticker look: the SVGs already have white stroke outlines baked in.
    The drop-shadow adds depth underneath the whole sticker. */
 .mc2-sticker-img {
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   display: block;
   object-fit: contain;
   filter: drop-shadow(0 2px 5px rgba(0,0,0,0.22));

@@ -98,8 +98,8 @@ function detectTheme(text) {
 // Some sticker PNGs have extra whitespace, making them look smaller at 34px.
 // Override their rendered size so they appear visually consistent with others.
 const STICKER_SIZE_OVERRIDES = {
-  flower: 42,
-  paw:    42,
+  flower: 37,
+  paw:    37,
 };
 
 // ─── Public helpers ───────────────────────────────────────────────────────────

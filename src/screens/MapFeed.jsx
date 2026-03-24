@@ -53,56 +53,36 @@ const CLUSTER_RADIUS = 150; // px — must be > card width (~160px anchor-to-edg
 //                  card width 160px, singles 167 px+ apart      → no card overlap ✓
 const MOMENT_TEMPLATES = [
   // ── Cluster A: food / restaurant pair ──
-  {
-    id: 1,
-    dlat:  0.0030, dlng:  0.0020,
-    photos: [NP3, NP4], avatar: A2_AVT,
-    text: '师傅做的寿司太绝了', time: '45m ago',
-  },
-  {
-    id: 2,
-    dlat:  0.0050, dlng:  0.0040,
-    photos: [NP7, NP8], avatar: A4_AVT,
-    text: '鲷鱼烧排队值了！', time: '3h ago',
-  },
+  { id: 1, dlat:  0.0030, dlng:  0.0020, photos: [NP3, NP4],       avatar: A2_AVT, text: '师傅做的寿司太绝了',     time: '45m ago' },
+  { id: 2, dlat:  0.0050, dlng:  0.0040, photos: [NP7, NP8],       avatar: A4_AVT, text: '鲷鱼烧排队值了！',       time: '3h ago'  },
   // ── Cluster B: nature / outdoor pair ──
-  {
-    id: 3,
-    dlat: -0.0030, dlng: -0.0020,
-    photos: [NP1, NP2], avatar: A1_AVT,
-    text: '今天爬山视野绝了', time: '2h ago',
-  },
-  {
-    id: 4,
-    dlat: -0.0050, dlng: -0.0040,
-    photos: [NP5, NP6], avatar: A3_AVT,
-    text: '富士山脚下喝咖啡', time: '1h ago',
-  },
-  // ── Singles — each >167 px from everything else at z14 ──
-  {
-    id: 5,
-    dlat:  0.0130, dlng:  0.0000,
-    photos: [M1_P1, M1_P2], avatar: A5_AVT,
-    text: '谁家的狗太可爱了', time: '30m ago',
-  },
-  {
-    id: 6,
-    dlat: -0.0130, dlng:  0.0000,
-    photos: [M2_P1, M2_P2], avatar: A6_AVT,
-    text: '夕阳也太美了吧', time: '1h ago',
-  },
-  {
-    id: 7,
-    dlat: -0.0020, dlng:  0.0072,
-    photos: [M3_P1, M3_P2], avatar: A7_AVT,
-    text: '今天的拉面真的绝了', time: '20m ago',
-  },
-  {
-    id: 8,
-    dlat:  0.0020, dlng: -0.0072,
-    photos: [M4_P1, M4_P2], avatar: A8_AVT,
-    text: '刚跑完步， 应该吃什么呢', time: '4h ago',
-  },
+  { id: 3, dlat: -0.0030, dlng: -0.0020, photos: [NP1, NP2],       avatar: A1_AVT, text: '今天爬山视野绝了',       time: '2h ago'  },
+  { id: 4, dlat: -0.0050, dlng: -0.0040, photos: [NP5, NP6],       avatar: A3_AVT, text: '富士山脚下喝咖啡',       time: '1h ago'  },
+  // ── Near-centre singles ──
+  { id: 5, dlat:  0.0130, dlng:  0.0000, photos: [M1_P1, M1_P2],   avatar: A5_AVT, text: '谁家的狗太可爱了',       time: '30m ago' },
+  { id: 7, dlat: -0.0020, dlng:  0.0072, photos: [M3_P1, M3_P2],   avatar: A7_AVT, text: '今天的拉面真的绝了',     time: '20m ago' },
+  { id: 8, dlat:  0.0020, dlng: -0.0072, photos: [M4_P1, M4_P2],   avatar: A8_AVT, text: '刚跑完步，应该吃什么呢', time: '4h ago'  },
+  // ── Singapore-wide moments ──
+  { id:  9, dlat: -0.047, dlng:  0.012, photos: [NP3, NP4],         avatar: A1_AVT, text: '乌节路今天好多人啊',     time: '8m ago'  },
+  { id: 10, dlat: -0.068, dlng:  0.041, photos: [M2_P1, M2_P2],     avatar: A2_AVT, text: '滨海湾夜景绝了',         time: '18m ago' },
+  { id: 11, dlat: -0.063, dlng:  0.026, photos: [NP7, NP8],         avatar: A3_AVT, text: '克拉码头今晚超热闹',     time: '33m ago' },
+  { id: 12, dlat: -0.103, dlng:  0.011, photos: [NP5, NP6],         avatar: A4_AVT, text: '圣淘沙阳光正好',         time: '1h ago'  },
+  { id: 13, dlat: -0.038, dlng: -0.004, photos: [NP1, NP2],         avatar: A5_AVT, text: '植物园散步好治愈',       time: '1h ago'  },
+  { id: 14, dlat: -0.019, dlng: -0.078, photos: [M4_P1, M4_P2],     avatar: A6_AVT, text: '裕廊湖边慢跑中',         time: '2h ago'  },
+  { id: 15, dlat:  0.002, dlng:  0.122, photos: [NP3, NP4],         avatar: A7_AVT, text: '淡滨尼咖啡好喝',         time: '40m ago' },
+  { id: 16, dlat:  0.079, dlng: -0.033, photos: [M3_P1, M3_P2],     avatar: A8_AVT, text: '兀兰今天好清静',         time: '3h ago'  },
+  { id: 17, dlat:  0.007, dlng:  0.170, photos: [NP1],               avatar: A1_AVT, text: '樟宜海边风很大',         time: '12m ago' },
+  { id: 18, dlat: -0.042, dlng: -0.012, photos: [NP5, NP6],         avatar: A2_AVT, text: '登普西周末市集',         time: '4h ago'  },
+  { id: 19, dlat: -0.052, dlng:  0.089, photos: [M1_P1, M1_P2],     avatar: A3_AVT, text: '东海岸骑行回来了',       time: '50m ago' },
+  { id: 20, dlat: -0.046, dlng:  0.032, photos: [NP7, NP8],         avatar: A4_AVT, text: '小印度颜色好鲜艳',       time: '1h ago'  },
+  { id: 21, dlat: -0.020, dlng:  0.031, photos: [NP1, NP2],         avatar: A5_AVT, text: '大巴窑茶餐厅早餐',       time: '25m ago' },
+  { id: 22, dlat: -0.058, dlng: -0.034, photos: [M2_P1, M2_P2],     avatar: A6_AVT, text: '女皇镇老派咖啡店',       time: '2h ago'  },
+  { id: 23, dlat: -0.041, dlng: -0.024, photos: [NP3, NP4],         avatar: A7_AVT, text: '荷兰村逛街真舒服',       time: '35m ago' },
+  { id: 24, dlat:  0.021, dlng:  0.130, photos: [NP5, NP6],         avatar: A8_AVT, text: '白沙公园放风筝！',       time: '6h ago'  },
+  { id: 25, dlat:  0.046, dlng:  0.078, photos: [NP7],               avatar: A1_AVT, text: '榜鹅水边傍晚散步',       time: '1h ago'  },
+  { id: 26, dlat:  0.017, dlng:  0.030, photos: [M4_P1, M4_P2],     avatar: A2_AVT, text: '宏茂桥公园的清晨',       time: '8h ago'  },
+  { id: 27, dlat: -0.055, dlng:  0.008, photos: [NP1, NP2],         avatar: A3_AVT, text: '牛车水米其林小吃',       time: '1h ago'  },
+  { id: 28, dlat: -0.034, dlng:  0.027, photos: [M3_P1],             avatar: A4_AVT, text: '武吉士街头随拍',         time: '45m ago' },
 ];
 
 // ─── Map style layers to hide ─────────────────────────────────────────────────
