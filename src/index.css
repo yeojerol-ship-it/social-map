@@ -24,25 +24,25 @@
    Desktop overrides body to #111 (charcoal frame) via the 600px media query. */
 html, body, #root {
   width: 100%;
-  overflow: hidden;
   font-family: -apple-system, 'SF Pro Text', sans-serif;
 }
 
+/* html must NOT carry overflow:hidden — its background bleeds into the
+   bottom safe-area on iOS Safari so no black strip shows beneath the app. */
 html {
-  height: 100%;
-  height: -webkit-fill-available;
+  height: 100dvh;
   background: #f6f4ea;
 }
 
 body {
   height: 100%;
-  min-height: -webkit-fill-available;
+  overflow: hidden;
   background: #f6f4ea;
 }
 
 #root {
   height: 100%;
-  min-height: -webkit-fill-available;
+  overflow: hidden;
   background: #f6f4ea;
 }
 
@@ -53,7 +53,7 @@ body {
     align-items: center;
     justify-content: center;
     background: #111;
-    height: 100vh;
+    height: 100dvh;
     min-height: unset;
   }
   #root {
