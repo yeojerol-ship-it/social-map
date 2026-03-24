@@ -115,7 +115,7 @@ export function getStickerLayout(stickerIds, placement, photoCount = 2) {
     ? 'around-image-1'
     : placement;
   const positions = PLACEMENTS[key] || PLACEMENTS['around-bubble'];
-  const filtered = stickerIds.filter(id => STICKER_PACK[id]);
+  const filtered = [...new Set(stickerIds)].filter(id => STICKER_PACK[id]);
   return positions
     .map((pos, i) => {
       // echoOf: reuse the same sticker asset as another slot (echo/shadow effect)
