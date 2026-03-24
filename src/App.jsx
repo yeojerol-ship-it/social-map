@@ -99,7 +99,7 @@ function RecordingOverlay({ liveText }) {
 
       {/* Release hint */}
       <div style={{
-        position: 'absolute', bottom: 'max(80px, calc(46px + env(safe-area-inset-bottom)))', left: 0, width: '100%',
+        position: 'absolute', bottom: 'max(96px, calc(62px + env(safe-area-inset-bottom)))', left: 0, width: '100%',
         display: 'flex', justifyContent: 'center',
         opacity: entered ? 1 : 0,
         transition: 'opacity 0.3s ease',

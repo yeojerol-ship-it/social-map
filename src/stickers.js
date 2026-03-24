@@ -49,11 +49,10 @@ const PLACEMENTS = {
     { x:  46, y:  36, rot:   0,    size: 40 },             // left side
     { x: 169, y:  75, rot:  -3.55, size: 24 },              // bottom-right small
   ],
-  // Single-photo: proportionally derived from 2-photo layout.
-  // 1-photo area ≈ x:79–151 (centered in ~150px-wide content column).
+  // Single-photo: pixel-exact from Figma node 242:7029.
   'around-image-1': [
-    { x: 130, y: 23, rot: 21.31, size: 40 },  // top-right large
-    { x:  58, y: 36, rot:  0,    size: 40 },  // left side
+    { x:  38, y: 19, rot:   0,    size: 40 },  // left side
+    { x: 121, y: 68, rot:  -3.55, size: 24 },  // small top-right
   ],
   // No photo: stickers above the bubble (bubble ≈ y:74–108 in 149px-tall card).
   'around-bubble': [
