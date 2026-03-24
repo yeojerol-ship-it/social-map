@@ -47,7 +47,7 @@ const PLACEMENTS = {
   'around-image': [
     { x: 162, y:  23, rot:  21.31, size: 40 },             // top-right large
     { x:  46, y:  36, rot:   0,    size: 40 },             // left side
-    { x: 169, y:  75, rot:  -3.55, size: 24, echoOf: 0 },  // small echo of slot 0
+    { x: 169, y:  75, rot:  -3.55, size: 24 },              // bottom-right small
   ],
   // Single-photo: proportionally derived from 2-photo layout.
   // 1-photo area ≈ x:79–151 (centered in ~150px-wide content column).
