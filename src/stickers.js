@@ -41,24 +41,24 @@ export const STICKER_IDS = Object.keys(STICKER_PACK);
 //
 // Stickers are centred on each corner: left = corner_x − size/2
 const PLACEMENTS = {
-  // Two-photo: stickers at the TOP corners of the photo area only — never over the bubble.
-  // Photos frame (2-photo): x≈66–183, y≈33–110. Bubble starts at y≈110.
-  // All stickers kept at y≤50 (bottom of sticker ≤80) so they stay in the photo zone.
+  // Two-photo: positions pixel-exact from Figma node 242:7011.
+  // Coordinates are relative to .mc2 (position:relative, 169px tall).
+  // Slot 2 uses echoOf:0 — same sticker asset as slot 0, rendered smaller.
   'around-image': [
-    { x: 174, y:   4, rot:  16 },           // top-right corner
-    { x:  62, y:   8, rot: -18 },           // top-left corner (on photo edge)
-    { x: 176, y:  46, rot:   9 },           // right edge, mid-photo (above bubble)
+    { x: 162, y:  23, rot:  21.31, size: 40 },             // top-right large
+    { x:  46, y:  36, rot:   0,    size: 40 },             // left side
+    { x: 169, y:  75, rot:  -3.55, size: 24, echoOf: 0 },  // small echo of slot 0
   ],
-  // Single-photo: photo centred in content ≈ x:86–157, y:44–115.
-  // Both stickers at the top corners — no sticker below y:20.
+  // Single-photo: proportionally derived from 2-photo layout.
+  // 1-photo area ≈ x:79–151 (centered in ~150px-wide content column).
   'around-image-1': [
-    { x:  55, y:  14, rot: -18 }, // top-left (on photo edge)
-    { x: 116, y:   8, rot:  12 }, // top-right
+    { x: 130, y: 23, rot: 21.31, size: 40 },  // top-right large
+    { x:  58, y: 36, rot:  0,    size: 40 },  // left side
   ],
   // No photo: stickers above the bubble (bubble ≈ y:74–108 in 149px-tall card).
   'around-bubble': [
-    { x: 136, y:  34, rot: -14 },
-    { x:  38, y:  34, rot:  14 },
+    { x: 136, y: 34, rot: -14 },
+    { x:  38, y: 34, rot:  14 },
   ],
 };
 
@@ -115,14 +115,18 @@ export function getStickerLayout(stickerIds, placement, photoCount = 2) {
     ? 'around-image-1'
     : placement;
   const positions = PLACEMENTS[key] || PLACEMENTS['around-bubble'];
-  return stickerIds
-    .filter(id => STICKER_PACK[id])
-    .slice(0, positions.length)
-    .map((id, i) => ({
-      src: STICKER_PACK[id],
-      ...positions[i],
-      ...(STICKER_SIZE_OVERRIDES[id] ? { size: STICKER_SIZE_OVERRIDES[id] } : {}),
-    }));
+  const filtered = stickerIds.filter(id => STICKER_PACK[id]);
+  return positions
+    .map((pos, i) => {
+      // echoOf: reuse the same sticker asset as another slot (echo/shadow effect)
+      const id = pos.echoOf !== undefined ? filtered[pos.echoOf] : filtered[i];
+      if (!id || !STICKER_PACK[id]) return null;
+      // Position-level size takes priority; STICKER_SIZE_OVERRIDES only applies
+      // when the placement has no explicit size (e.g. around-bubble at 30px default).
+      const sizeOverride = pos.size ? {} : STICKER_SIZE_OVERRIDES[id] ? { size: STICKER_SIZE_OVERRIDES[id] } : {};
+      return { src: STICKER_PACK[id], ...pos, ...sizeOverride };
+    })
+    .filter(Boolean);
 }
 
 /** Fallback layout when OpenAI is unavailable */
