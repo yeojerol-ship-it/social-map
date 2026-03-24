@@ -12,21 +12,21 @@ const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogni
 
 // ─── MicHero ──────────────────────────────────────────────────────────────────
 const MIC_STYLES = {
-  // scale from bottom, then push down so visual bottom overlaps button by 8px
-  // button top = container_height - 88; mic bottom after scale(0.22) from bottom-origin = container - 209
-  // need to move down: (container - 88 + 8) - (container - 209) = 113px → translateY(113px)
+  // Map mode: hidden (scale 0 so it springs in from nothing when recording starts)
   map: {
-    transform:  'translateY(133px) scale(0.22) rotate(5.78deg)',
-    opacity:    1,
+    transform:  'scale(0)',
+    opacity:    0,
     transition: 'transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.3s ease',
   },
+  // Recording mode: scale(0.6) keeps visual bottom fixed at 8px above bubble (transformOrigin:center bottom)
+  // Visual height = 475 * 0.6 = 285px → mic sits in lower ~33% of screen, not centered
   recording: {
-    transform:  'translateY(0px) scale(1) rotate(0deg)',
+    transform:  'scale(0.6) rotate(0deg)',
     opacity:    1,
     transition: 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease',
   },
   exit: {
-    transform:  'translateY(30px) scale(0.55) rotate(0deg)',
+    transform:  'scale(0) rotate(0deg)',
     opacity:    0,
     transition: 'transform 0.18s cubic-bezier(0.4,0,1,1), opacity 0.12s ease',
   },
