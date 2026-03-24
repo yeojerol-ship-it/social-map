@@ -37,7 +37,7 @@ function MicHero({ mode }) {
   return (
     <div style={{
       position: 'absolute',
-      left: -1, bottom: 209, width: 392, height: 475,
+      left: 0, bottom: 'calc(201px + 8px)', width: '100%', height: 475,
       zIndex: 34, pointerEvents: 'none',
       transformOrigin: 'center bottom',
       ...MIC_STYLES[mode],
@@ -257,7 +257,7 @@ export default function App() {
   return (
     <div style={{
       position: 'relative',
-      width: '100%', height: '100dvh',
+      width: '100%', height: '100%',
       overflow: 'hidden',
       background: '#000',
     }}>

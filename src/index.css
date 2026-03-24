@@ -17,16 +17,47 @@
 
 *:focus { outline: none; }
 
-html, body, #root {
+html, body {
   width: 100%;
   height: 100%;
-  min-height: 100dvh;
-  overflow: hidden;
   font-family: -apple-system, 'SF Pro Text', sans-serif;
 }
 
+/* iOS Safari: fill the visible area exactly */
+html { height: -webkit-fill-available; }
+
 body {
+  background: #111;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  min-height: -webkit-fill-available;
+}
+
+/* iPhone 17 Pro simulator — only on screens wider than the phone */
+#root {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: -webkit-fill-available;
+  overflow: hidden;
   background: #000;
+}
+
+@media (min-width: 430px) {
+  #root {
+    width: 393px;
+    height: 852px;
+    min-height: unset;
+    border-radius: 44px;
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.12),
+      0 40px 80px rgba(0,0,0,0.7);
+  }
 }
 
 /* ── Leaflet overrides ──────────────────────────────────────────── */
