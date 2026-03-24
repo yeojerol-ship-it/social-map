@@ -154,7 +154,7 @@ function injectStickers(el, layout) {
     const div = document.createElement('div');
     div.className = 'mc2-sticker';
     div.style.cssText = `left:${x}px;top:${y}px;transform:rotate(${rot}deg)`;
-    const sizeStyle = size ? `width:${size}px;height:${size}px;` : '';
+    const sizeStyle = size ? `width:${size}px;height:auto;` : '';
     div.innerHTML = `<img src="${src}" alt="" class="mc2-sticker-img" style="${sizeStyle}"/>`;
     mc2.appendChild(div);
   });

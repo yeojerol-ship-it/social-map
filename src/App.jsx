@@ -16,7 +16,7 @@ const MIC_STYLES = {
   // button top = container_height - 88; mic bottom after scale(0.22) from bottom-origin = container - 209
   // need to move down: (container - 88 + 8) - (container - 209) = 113px → translateY(113px)
   map: {
-    transform:  'translateY(129px) scale(0.22) rotate(5.78deg)',
+    transform:  'translateY(133px) scale(0.22) rotate(5.78deg)',
     opacity:    1,
     transition: 'transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.3s ease',
   },
@@ -167,34 +167,30 @@ export default function App() {
       const recognition = new SpeechRecognition();
       recognition.continuous     = true;
       recognition.interimResults = true;
-      recognition.lang           = navigator.language || 'zh-CN';
+      recognition.lang           = 'zh-CN';
       recognition.onresult = (e) => {
         let text = '';
         for (let i = 0; i < e.results.length; i++) text += e.results[i][0].transcript;
         liveRef.current = text;
         setLiveText(text);
       };
+      const restartAfter = (ms) => {
+        setTimeout(() => {
+          if (recognitionRef.current) try { recognition.start(); } catch (_) {}
+        }, ms);
+      };
       recognition.onerror = (e) => {
-        // Auto-restart on recoverable errors (e.g. no-speech timeout)
-        if ((e.error === 'no-speech' || e.error === 'audio-capture') && recognitionRef.current) {
-          setTimeout(() => {
-            if (recognitionRef.current) try { recognition.start(); } catch (_) {}
-          }, 150);
-        }
+        // not-allowed / service-not-allowed → no point restarting (no permission)
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') return;
+        // All other errors (no-speech, audio-capture, network, aborted…) → restart
+        if (recognitionRef.current) restartAfter(150);
       };
       recognition.onend = () => {
-        // Restart if still recording — small delay required on iOS Safari
-        if (recognitionRef.current) {
-          setTimeout(() => {
-            if (recognitionRef.current) try { recognition.start(); } catch (_) {}
-          }, 150);
-        }
+        // Safari stops continuous recognition frequently — always restart if still recording
+        if (recognitionRef.current) restartAfter(100);
       };
       // iOS Safari: recognition.start() MUST be called synchronously inside the
-      // user-gesture handler. Calling it inside a Promise .then() breaks the
-      // gesture context and silently prevents recognition from starting.
-      // getUserMedia fires in parallel only to warm up the permission dialog.
-      navigator.mediaDevices?.getUserMedia({ audio: true }).catch(() => {});
+      // user-gesture handler — do NOT await anything before this line.
       try { recognition.start(); } catch (_) {}
       recognitionRef.current = recognition;
     }
@@ -260,18 +256,11 @@ export default function App() {
 
   return (
     <div style={{
-      width: '100vw', height: '100dvh',
-      minHeight: '100dvh',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      position: 'relative',
+      width: '100%', height: '100dvh',
+      overflow: 'hidden',
       background: '#000',
     }}>
-      <div style={{
-        position: 'relative',
-        width: '100%', height: '100dvh',
-        maxWidth: 390,
-        overflow: 'hidden',
-        background: '#000', flexShrink: 0,
-      }}>
         {/* Map — always the base layer */}
         <div style={{
           position: 'absolute', inset: 0,
@@ -320,7 +309,5 @@ export default function App() {
         {/* MicHero — single mic across map + recording states */}
         <MicHero mode={micMode} />
       </div>
-
-    </div>
   );
 }
