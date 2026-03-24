@@ -17,33 +17,30 @@
 
 *:focus { outline: none; }
 
-/* Mobile base: consistent height chain for iOS Safari.
-   All layers use the same -webkit-fill-available source so no gaps appear.
-   Backgrounds are cream (#f6f4ea) to match the map — any pixel gap is
-   invisible instead of showing a black strip.
-   Desktop overrides body to #111 (charcoal frame) via the 600px media query. */
+/* Mobile base: full-bleed layout for iOS Safari with safe-area support.
+   min-height:100dvh on every root layer so no element is shorter than
+   the dynamic viewport. No overflow:hidden on html/body — the cream
+   background must bleed all the way to screen edges including safe areas.
+   Desktop overrides body to #111 via the 600px media query. */
 html, body, #root {
   width: 100%;
   font-family: -apple-system, 'SF Pro Text', sans-serif;
+  background: #f6f4ea;
 }
 
-/* html must NOT carry overflow:hidden — its background bleeds into the
-   bottom safe-area on iOS Safari so no black strip shows beneath the app. */
 html {
-  height: 100dvh;
-  background: #f6f4ea;
+  min-height: 100dvh;
+  /* no overflow:hidden — background must extend into bottom safe area */
 }
 
 body {
-  height: 100%;
-  overflow: hidden;
-  background: #f6f4ea;
+  min-height: 100dvh;
+  /* no overflow:hidden — let the app shell handle clipping */
 }
 
 #root {
-  height: 100%;
-  overflow: hidden;
-  background: #f6f4ea;
+  min-height: 100dvh;
+  /* overflow:hidden only on desktop via media query below */
 }
 
 /* Desktop: iPhone 17 Pro simulator — flex centering + fixed frame */
@@ -53,8 +50,7 @@ body {
     align-items: center;
     justify-content: center;
     background: #111;
-    height: 100dvh;
-    min-height: unset;
+    min-height: 100dvh;
   }
   #root {
     width: 393px;

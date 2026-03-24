@@ -257,13 +257,12 @@ export default function App() {
   return (
     <div style={{
       position: 'relative',
+      display: 'flex',
+      flexDirection: 'column',
       width: '100%',
-      height: '100dvh',
       minHeight: '100dvh',
       overflow: 'hidden',
       background: '#f6f4ea',
-      /* Paint the bottom safe-area with the app background so no black
-         strip bleeds through on iPhone home-indicator region.           */
       paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       boxSizing: 'border-box',
     }}>
