@@ -38,7 +38,7 @@ body {
 #root {
   height: 100%;
   min-height: -webkit-fill-available;
-  background: #f6f4ea;
+  background: #000;
 }
 
 /* Desktop: iPhone 17 Pro simulator — flex centering + fixed frame */

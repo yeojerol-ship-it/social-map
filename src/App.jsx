@@ -99,7 +99,7 @@ function RecordingOverlay({ liveText }) {
 
       {/* Release hint */}
       <div style={{
-        position: 'absolute', bottom: 'max(96px, calc(62px + env(safe-area-inset-bottom)))', left: 0, width: '100%',
+        position: 'absolute', bottom: 'max(100px, calc(66px + env(safe-area-inset-bottom)))', left: 0, width: '100%',
         display: 'flex', justifyContent: 'center',
         opacity: entered ? 1 : 0,
         transition: 'opacity 0.3s ease',
@@ -259,7 +259,7 @@ export default function App() {
       position: 'relative',
       width: '100%', height: '100dvh',
       overflow: 'hidden',
-      background: '#f6f4ea',
+      background: '#000',
     }}>
         {/* Map — always the base layer */}
         <div style={{
