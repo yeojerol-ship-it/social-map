@@ -251,7 +251,7 @@ function Overlay({ onRecord, recording }) {
       {/* Bottom section — fades out when recording; MicHero replaces the mic visually */}
       <div style={{
         position: 'absolute', bottom: 0, left: 0, right: 0,
-        paddingBottom: 'max(28px, env(safe-area-inset-bottom))',
+        paddingBottom: 'max(48px, env(safe-area-inset-bottom))',
         display: 'flex', flexDirection: 'column', alignItems: 'center',
         opacity: recording ? 0 : 1,
         transition: 'opacity 0.15s ease',

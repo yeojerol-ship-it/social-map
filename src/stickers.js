@@ -46,13 +46,13 @@ const PLACEMENTS = {
   // All stickers kept at y≤50 (bottom of sticker ≤80) so they stay in the photo zone.
   'around-image': [
     { x: 174, y:   4, rot:  16 },           // top-right corner
-    { x:  52, y:   8, rot: -18 },           // top-left corner
+    { x:  62, y:   8, rot: -18 },           // top-left corner (on photo edge)
     { x: 176, y:  46, rot:   9 },           // right edge, mid-photo (above bubble)
   ],
   // Single-photo: photo centred in content ≈ x:86–157, y:44–115.
   // Both stickers at the top corners — no sticker below y:20.
   'around-image-1': [
-    { x:  38, y:  14, rot: -18 }, // top-left
+    { x:  55, y:  14, rot: -18 }, // top-left (on photo edge)
     { x: 116, y:   8, rot:  12 }, // top-right
   ],
   // No photo: stickers above the bubble (bubble ≈ y:74–108 in 149px-tall card).

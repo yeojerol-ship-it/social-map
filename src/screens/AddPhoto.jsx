@@ -110,8 +110,8 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
 
   return (
     <div style={{
-      position: 'relative', width: '100%', height: '100%',
-      overflow: 'hidden',
+      position: 'relative', width: 390, height: 844,
+      borderRadius: 44, overflow: 'hidden',
     }}>
       <StatusBar />
 

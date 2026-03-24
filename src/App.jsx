@@ -259,7 +259,7 @@ export default function App() {
       position: 'relative',
       width: '100%', height: '100dvh',
       overflow: 'hidden',
-      background: '#000',
+      background: '#f6f4ea',
     }}>
         {/* Map — always the base layer */}
         <div style={{
