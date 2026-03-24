@@ -590,7 +590,7 @@ export default function MapFeed({ onRecord, recording, newMoment }) {
 
       state.moments.push({ moment, marker, inCluster: false, clusterLngLat: null });
 
-      // Spring the new card in
+      // Spring the new card in, then pulse a purple glow for 4s
       const mc2 = el.querySelector('.mc2');
       mc2.style.opacity   = '0';
       mc2.style.transform = 'scale(0.6) translateY(12px)';
@@ -598,6 +598,8 @@ export default function MapFeed({ onRecord, recording, newMoment }) {
         mc2.style.transition = 'opacity 0.4s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1)';
         mc2.style.opacity    = '1';
         mc2.style.transform  = 'scale(1) translateY(0)';
+        mc2.classList.add('mc2--glow');
+        mc2.addEventListener('animationend', () => mc2.classList.remove('mc2--glow'), { once: true });
       }));
 
       // Sticker analysis — skip entirely when no photo

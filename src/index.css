@@ -474,6 +474,15 @@ body {
   line-height: 1.4;
 }
 
+/* ── New moment glow ───────────────────────────────────────────────── */
+@keyframes mc2-glow {
+  0%   { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.12)) drop-shadow(0 0 18px rgba(89,56,255,0.7)); }
+  100% { filter: drop-shadow(0 2px 8px rgba(0,0,0,0.12)) drop-shadow(0 0 18px rgba(89,56,255,0)); }
+}
+.mc2--glow {
+  animation: mc2-glow 4s ease-out forwards;
+}
+
 /* ── Recording overlay animations ─────────────────────────────────── */
 @keyframes rec-pulse {
   0%, 100% { transform: scale(1);    }
