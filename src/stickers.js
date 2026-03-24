@@ -41,20 +41,24 @@ export const STICKER_IDS = Object.keys(STICKER_PACK);
 //
 // Stickers are centred on each corner: left = corner_x − size/2
 const PLACEMENTS = {
-  // Two-photo: touch top-left, top-right, bottom-right corners of the photo area.
+  // Two-photo: stickers at the TOP corners of the photo area only — never over the bubble.
+  // Photos frame (2-photo): x≈66–183, y≈33–110. Bubble starts at y≈110.
+  // All stickers kept at y≤50 (bottom of sticker ≤80) so they stay in the photo zone.
   'around-image': [
-    { x: 174, y:  22, rot:  16 },           // top-right
-    { x:  60, y:  27, rot: -18 },           // top-left
-    { x: 168, y:  78, rot:  -8 },            // bottom-right
+    { x: 174, y:   4, rot:  16 },           // top-right corner
+    { x:  52, y:   8, rot: -18 },           // top-left corner
+    { x: 176, y:  46, rot:   9 },           // right edge, mid-photo (above bubble)
   ],
   // Single-photo: photo centred in content ≈ x:86–157, y:44–115.
+  // Both stickers at the top corners — no sticker below y:20.
   'around-image-1': [
-    { x:  62, y:  26, rot: -18 }, // top-left
-    { x: 128, y:  82, rot:  -8 }, // bottom-right
+    { x:  38, y:  14, rot: -18 }, // top-left
+    { x: 116, y:   8, rot:  12 }, // top-right
   ],
+  // No photo: stickers above the bubble (bubble ≈ y:74–108 in 149px-tall card).
   'around-bubble': [
-    { x: 152, y: 66, rot: -14 },
-    { x:  20, y: 60, rot:  14 },
+    { x: 136, y:  34, rot: -14 },
+    { x:  38, y:  34, rot:  14 },
   ],
 };
 

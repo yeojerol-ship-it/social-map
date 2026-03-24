@@ -24,6 +24,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
       setAvatarIn(false);
       setBubbleIn(false);
       setFrozenFrame(null);
+      setFacingMode('environment');
       return;
     }
     const t1 = setTimeout(() => setAvatarIn(true), 80);
@@ -109,8 +110,8 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
 
   return (
     <div style={{
-      position: 'relative', width: 390, height: 844,
-      borderRadius: 44, overflow: 'hidden',
+      position: 'relative', width: '100%', height: '100%',
+      overflow: 'hidden',
     }}>
       <StatusBar />
 
@@ -285,6 +286,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
           cursor: snapped ? 'pointer' : 'default',
           transform: snapped ? 'scale(1)' : 'scale(0)',
           opacity: snapped ? 1 : 0,
+          pointerEvents: snapped ? 'auto' : 'none',
           transition: 'transform 0.28s cubic-bezier(0.34,1.56,0.64,1), opacity 0.15s ease',
         }}
       >
