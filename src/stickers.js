@@ -50,7 +50,7 @@ const PLACEMENTS = {
   // Single-photo: photo centred in content ≈ x:86–157, y:44–115.
   'around-image-1': [
     { x:  62, y:  26, rot: -18 }, // top-left
-    { x: 130, y:  86, rot:  -8 }, // bottom-right
+    { x: 128, y:  82, rot:  -8 }, // bottom-right
   ],
   'around-bubble': [
     { x: 152, y: 66, rot: -14 },
