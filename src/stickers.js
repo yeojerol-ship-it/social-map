@@ -94,9 +94,17 @@ function detectTheme(text) {
   return 'default';
 }
 
+// ─── Per-sticker size overrides ───────────────────────────────────────────────
+// Some sticker PNGs have extra whitespace, making them look smaller at 34px.
+// Override their rendered size so they appear visually consistent with others.
+const STICKER_SIZE_OVERRIDES = {
+  flower: 42,
+  paw:    42,
+};
+
 // ─── Public helpers ───────────────────────────────────────────────────────────
 
-/** Zips sticker IDs with placement positions → [{src, x, y, rot}] */
+/** Zips sticker IDs with placement positions → [{src, x, y, rot, size?}] */
 export function getStickerLayout(stickerIds, placement, photoCount = 2) {
   // Remap around-image to single-photo variant when only 1 photo
   const key = placement === 'around-image' && photoCount === 1
@@ -106,7 +114,11 @@ export function getStickerLayout(stickerIds, placement, photoCount = 2) {
   return stickerIds
     .filter(id => STICKER_PACK[id])
     .slice(0, positions.length)
-    .map((id, i) => ({ src: STICKER_PACK[id], ...positions[i] }));
+    .map((id, i) => ({
+      src: STICKER_PACK[id],
+      ...positions[i],
+      ...(STICKER_SIZE_OVERRIDES[id] ? { size: STICKER_SIZE_OVERRIDES[id] } : {}),
+    }));
 }
 
 /** Fallback layout when OpenAI is unavailable */
