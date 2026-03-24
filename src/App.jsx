@@ -21,7 +21,7 @@ const MIC_STYLES = {
   // Recording mode: scale(0.6) keeps visual bottom fixed at 8px above bubble (transformOrigin:center bottom)
   // Visual height = 475 * 0.6 = 285px → mic sits in lower ~33% of screen, not centered
   recording: {
-    transform:  'scale(0.69) rotate(0deg)',
+    transform:  'scale(1) rotate(0deg)',
     opacity:    1,
     transition: 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease',
   },
