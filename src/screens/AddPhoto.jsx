@@ -68,22 +68,39 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
 
   const handleSnap = () => {
     if (snapped) return;
-    // Capture current video frame
     const video = videoRef.current;
+    const w = video?.videoWidth  || 382;
+    const h = video?.videoHeight || 382;
+
     const canvas = document.createElement('canvas');
-    canvas.width  = video?.videoWidth  || 382;
-    canvas.height = video?.videoHeight || 382;
+    canvas.width  = w;
+    canvas.height = h;
     const ctx = canvas.getContext('2d');
+
     if (video && video.readyState >= 2) {
-      if (facingMode === 'user') {
-        // Mirror front camera to match display
-        ctx.translate(canvas.width, 0);
-        ctx.scale(-1, 1);
-      }
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const mirror = facingMode === 'user';
+
+      // ── Pass 1: color-corrected base (brightness + softer contrast + warmth) ──
+      if (mirror) { ctx.translate(w, 0); ctx.scale(-1, 1); }
+      if (ctx.filter !== undefined) ctx.filter = 'brightness(1.04) contrast(0.92) saturate(1.10)';
+      ctx.drawImage(video, 0, 0, w, h);
+      ctx.filter = 'none';
+      if (mirror) ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+      // ── Pass 2: subtle blur overlay at 20% — softens skin texture naturally ──
+      const softCanvas = document.createElement('canvas');
+      softCanvas.width  = w;
+      softCanvas.height = h;
+      const sCtx = softCanvas.getContext('2d');
+      if (mirror) { sCtx.translate(w, 0); sCtx.scale(-1, 1); }
+      if (sCtx.filter !== undefined) sCtx.filter = 'blur(2.5px) brightness(1.04) saturate(1.10)';
+      sCtx.drawImage(video, 0, 0, w, h);
+      ctx.globalAlpha = 0.20;
+      ctx.drawImage(softCanvas, 0, 0);
+      ctx.globalAlpha = 1.0;
     }
+
     setFrozenFrame(canvas.toDataURL('image/jpeg', 0.92));
-    // Stop camera after capture
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(t => t.stop());
       streamRef.current = null;
@@ -133,6 +150,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
             width: '100%', height: '100%',
             objectFit: 'cover',
             transform: facingMode === 'user' ? 'scaleX(-1)' : 'none',
+            filter: 'brightness(1.04) contrast(0.92) saturate(1.10)',
             opacity: snapped ? 0 : 1,
             transition: 'opacity 0.15s ease',
           }}
