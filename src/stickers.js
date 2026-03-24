@@ -45,12 +45,12 @@ const PLACEMENTS = {
   'around-image': [
     { x: 174, y:  22, rot:  16 },           // top-right
     { x:  60, y:  27, rot: -18 },           // top-left
-    { x: 168, y:  82, rot:  -8, size: 30 }, // bottom-right
+    { x: 168, y:  78, rot:  -8 },            // bottom-right
   ],
   // Single-photo: photo centred in content ≈ x:86–157, y:44–115.
   'around-image-1': [
     { x:  66, y:  26, rot: -18 }, // top-left
-    { x: 134, y:  90, rot:  -8, size: 30 }, // bottom-right
+    { x: 134, y:  86, rot:  -8 },            // bottom-right
   ],
   'around-bubble': [
     { x: 152, y: 66, rot: -14 },
