@@ -18,6 +18,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
   const [facingMode, setFacingMode]   = useState('user');
   const [frozenFrame, setFrozenFrame] = useState(null); // dataURL of captured frame
   const [snapStickers, setSnapStickers] = useState([]); // [{ src, corner }]
+  const [isPosting, setIsPosting] = useState(false);
   const videoRef  = useRef(null);
   const streamRef = useRef(null);
   const snapReqIdRef = useRef(0);
@@ -42,12 +43,14 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
       setBubbleIn(false);
       setFrozenFrame(null);
       setSnapStickers([]);
+      setIsPosting(false);
       setFacingMode('user');
       return;
     }
     // Always start fresh when the screen opens
     setFrozenFrame(null);
     setSnapStickers([]);
+    setIsPosting(false);
     setFacingMode('user');
     setAvatarIn(false);
     setBubbleIn(false);
@@ -387,6 +390,9 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
         gap: 40,
         boxSizing: 'border-box',
         zIndex: 5,
+        opacity: isPosting ? 0 : 1,
+        transition: 'opacity 0.10s ease',
+        pointerEvents: isPosting ? 'none' : 'auto',
       }}>
         <div
           onClick={flipCamera}
@@ -437,7 +443,11 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
             }} />
           </div>
           <div
-            onClick={snapped ? () => onPost(frozenFrame) : undefined}
+            onClick={snapped ? () => {
+              if (isPosting) return;
+              setIsPosting(true);
+              window.setTimeout(() => onPost(frozenFrame), 120);
+            } : undefined}
             role="button"
             tabIndex={0}
             style={{
