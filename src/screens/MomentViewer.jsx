@@ -2,16 +2,20 @@ import { useState, useEffect, useLayoutEffect, useRef } from 'react';
 
 const X_MARK_URL = 'https://www.figma.com/api/mcp/asset/55a3cc08-6f30-44be-a965-ae886a856636';
 
-const MAX_SCALE = 2.2;
+/** Upper cap — keep the moment card visually smaller on the screen. */
+const MAX_SCALE = 1.35;
+/** Shrink computed fit slightly so stickers / drop-shadow / long text stay inside the viewport. */
+const SCALE_COMFORT = 0.88;
 
 /** Insets so the scaled card (and absolute stickers) fit inside the visual viewport. */
 function getViewerMargin() {
   const vv = window.visualViewport;
   const innerH = vv?.height ?? window.innerHeight;
-  const padX = 40;
-  const padTop = (vv?.offsetTop ?? 0) + 96; // close control + status area
-  const padBottom = 56; // home indicator / thumb clearance
-  return { padX, padTop, padBottom, innerW: window.innerWidth, innerH };
+  const innerW = vv?.width ?? window.innerWidth;
+  const padX = 48;
+  const padTop = (vv?.offsetTop ?? 0) + 112;
+  const padBottom = 72;
+  return { padX, padTop, padBottom, innerW, innerH };
 }
 
 function computeCardScale(cardEl) {
@@ -19,7 +23,7 @@ function computeCardScale(cardEl) {
   const w = cardEl.offsetWidth;
   const h = cardEl.offsetHeight;
   // Stickers are position:absolute; they don't grow offsetHeight — add slack for overflow + rotation.
-  const stickerSlack = 48;
+  const stickerSlack = 64;
   const effW = w + stickerSlack;
   const effH = h + stickerSlack;
   const { padX, padTop, padBottom, innerW, innerH } = getViewerMargin();
@@ -27,7 +31,8 @@ function computeCardScale(cardEl) {
   const availH = Math.max(64, innerH - padTop - padBottom);
   const scaleW = availW / effW;
   const scaleH = availH / effH;
-  return Math.min(MAX_SCALE, scaleW, scaleH);
+  const fitted = Math.min(MAX_SCALE, scaleW, scaleH) * SCALE_COMFORT;
+  return Math.max(0.55, fitted);
 }
 
 const PHOTO_SLOTS = {
@@ -284,7 +289,14 @@ export default function MomentViewer({ visible, moment, stickers = [], onClose }
   return (
     <div
       ref={viewerRef}
-      style={{ position: 'absolute', inset: 0, zIndex: 50, pointerEvents: visible ? 'auto' : 'none' }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        width: '100%',
+        maxHeight: '100dvh',
+        zIndex: 50,
+        pointerEvents: visible ? 'auto' : 'none',
+      }}
     >
       {/* Blur + cream tint */}
       <div style={{
@@ -295,17 +307,32 @@ export default function MomentViewer({ visible, moment, stickers = [], onClose }
         pointerEvents: 'none',
       }} />
 
-      {/* ── Scaled moment card ── */}
+      {/* ── Scaled moment card — flex-centered in the viewport ── */}
       <div style={{
-        position: 'absolute', top: '50%', left: '50%',
-        transform: `translate(-50%, -50%) scale(${show ? cardScale : 0.6})`,
-        opacity: show ? 1 : 0,
-        transition: show
-          ? 'opacity 0.25s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1)'
-          : 'opacity 0.2s ease, transform 0.2s ease',
-        overflow: 'visible',
+        position: 'absolute',
+        inset: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingLeft: 'max(20px, env(safe-area-inset-left, 0px))',
+        paddingRight: 'max(20px, env(safe-area-inset-right, 0px))',
+        paddingTop: 'max(88px, calc(env(safe-area-inset-top, 0px) + 72px))',
+        paddingBottom: 'max(32px, env(safe-area-inset-bottom, 0px))',
+        boxSizing: 'border-box',
+        pointerEvents: 'none',
         zIndex: 2,
       }}>
+        <div style={{
+          flexShrink: 0,
+          transform: `scale(${show ? cardScale : 0.6})`,
+          transformOrigin: 'center center',
+          opacity: show ? 1 : 0,
+          transition: show
+            ? 'opacity 0.25s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1)'
+            : 'opacity 0.2s ease, transform 0.2s ease',
+          overflow: 'visible',
+          pointerEvents: 'auto',
+        }}>
         <div
           ref={cardRef}
           className="mc2"
@@ -336,6 +363,7 @@ export default function MomentViewer({ visible, moment, stickers = [], onClose }
                 style={s.size ? { width: s.size, height: s.size } : {}} />
             </div>
           ))}
+        </div>
         </div>
       </div>
 
@@ -374,7 +402,9 @@ export default function MomentViewer({ visible, moment, stickers = [], onClose }
       <button
         onClick={onClose}
         style={{
-          position: 'absolute', right: 24, top: 72,
+          position: 'absolute',
+          right: 'max(24px, env(safe-area-inset-right, 0px))',
+          top: 'max(72px, calc(env(safe-area-inset-top, 0px) + 16px))',
           width: 48, height: 48, borderRadius: 100,
           background: 'rgba(255,255,255,0.5)',
           border: '1px solid rgba(0,0,0,0.03)',
