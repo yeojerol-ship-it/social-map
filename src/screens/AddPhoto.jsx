@@ -19,6 +19,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
   const [frozenFrame, setFrozenFrame] = useState(null); // dataURL of captured frame
   const [snapStickers, setSnapStickers] = useState([]); // [{ src, corner }]
   const [isPosting, setIsPosting] = useState(false);
+  const [camReady, setCamReady] = useState(false);
   const videoRef  = useRef(null);
   const streamRef = useRef(null);
   const snapReqIdRef = useRef(0);
@@ -68,6 +69,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
       }
       return;
     }
+    setCamReady(false);
     let cancelled = false;
     navigator.mediaDevices?.getUserMedia({ video: { facingMode }, audio: false })
       .then(stream => {
@@ -216,11 +218,24 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
             overflow: 'hidden',
             background: '#000',
           }}>
+            {/* Colorful gradient sweep while camera warms up */}
+            {!snapped && !camReady && (
+              <div
+                className="camera-loading-sweep"
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  zIndex: 1,
+                }}
+              />
+            )}
             <video
               ref={videoRef}
               autoPlay
               playsInline
               muted
+              onLoadedData={() => setCamReady(true)}
+              onPlaying={() => setCamReady(true)}
               style={{
                 position: 'absolute', inset: 0,
                 width: '100%', height: '100%',
@@ -229,6 +244,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
                 filter: 'brightness(1.04) contrast(0.92) saturate(1.10)',
                 opacity: snapped ? 0 : 1,
                 transition: 'opacity 0.15s ease',
+                zIndex: 2,
               }}
             />
             {frozenFrame && (
