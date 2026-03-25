@@ -195,7 +195,15 @@ function spawnReactionBurst(mc2) {
     .filter(Boolean);
 
   // Use only the stickers currently shown on this moment.
-  if (momentStickerSources.length === 0) return;
+  // If AI stickers haven't loaded yet, fall back to any sticker images already
+  // present on this moment card (keeps tap feeling responsive).
+  const sources =
+    momentStickerSources.length > 0
+      ? momentStickerSources
+      : Array.from(mc2.querySelectorAll('.mc2-sticker-img'))
+          .map((img) => img.getAttribute('src'))
+          .filter(Boolean);
+  if (sources.length === 0) return;
 
   const w = mc2.offsetWidth || 200;
   const h = mc2.offsetHeight || 169;
@@ -216,7 +224,7 @@ function spawnReactionBurst(mc2) {
     const y = cy + Math.sin(ang) * r - 15;
     const rot = (Math.random() - 0.5) * 56;
     const size = Math.round(22 + Math.random() * 14);
-    const src = momentStickerSources[(Math.random() * momentStickerSources.length) | 0];
+    const src = sources[(Math.random() * sources.length) | 0];
     const delay = i * 140 + ((Math.random() * 40) | 0); // one-by-one
 
     const targetX = mc2Rect.left + x + size / 2;
@@ -443,6 +451,9 @@ function bindMomentTapAndDrag(el, map) {
   mc2.addEventListener('pointerup', (e) => {
     e.preventDefault();
     e.stopPropagation();
+    // Treat pointerup as the authoritative tap (click synthesis is flaky on iOS).
+    const isPhotoTarget = !!e.target.closest?.('.mc2-p1-inner, .mc2-p2-inner, .mc2-p-single-inner');
+    if (!isPhotoTarget) spawnReactionBurst(mc2);
     window.setTimeout(releaseTapLock, 30);
   });
 
@@ -455,13 +466,7 @@ function bindMomentTapAndDrag(el, map) {
     e.stopPropagation();
   });
 
-  mc2.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (e.target.closest('.mc2-p1-inner, .mc2-p2-inner, .mc2-p-single-inner')) return;
-    e.stopPropagation();
-    spawnReactionBurst(mc2);
-    window.setTimeout(releaseTapLock, 80);
-  });
+  // No reliance on click synthesis (can be flaky on iOS); pointerup handles taps.
 
   setupMapPhotoDrag(mc2, map);
 }
@@ -565,9 +570,8 @@ function Overlay({ onRecord, recording }) {
   };
 
   // Long-press duration before recording starts.
-  // Kept long enough that a normal tap won't trigger recording,
-  // but short enough to feel responsive on mobile web.
-  const LONGPRESS_MS = 260;
+  // Keep this responsive but not "tap-like".
+  const LONGPRESS_MS = 210;
 
   const startLongPress = (e) => {
     if (recording) return;
@@ -584,9 +588,9 @@ function Overlay({ onRecord, recording }) {
     try { btn.setPointerCapture(e.pointerId); } catch (_) {}
 
     pressTimerRef.current = window.setTimeout(() => {
-      pressTimerRef.current = null;
-      activePointerIdRef.current = null;
+      // Fire once, then fully clean up listeners so the next press isn't laggy.
       onRecord();
+      clearPress();
     }, LONGPRESS_MS);
 
     // Cancel if the pointer leaves the button bounds during the hold.
@@ -655,6 +659,9 @@ function Overlay({ onRecord, recording }) {
           onPointerUp={endLongPress}
           onPointerCancel={endLongPress}
           onPointerLeave={endLongPress}
+          onTouchStart={(e) => startLongPress(e)}
+          onTouchEnd={endLongPress}
+          onTouchCancel={endLongPress}
           style={{
             width: 350, height: 60, borderRadius: 999,
             background: 'black', border: 'none',
