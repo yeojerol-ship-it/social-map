@@ -49,10 +49,10 @@ const PLACEMENTS = {
     { x:  46, y:  36, rot:   0,    size: 40 },             // left side
     { x: 169, y:  75, rot:  -3.55, size: 24 },              // bottom-right small
   ],
-  // Single-photo: pixel-exact from Figma node 242:7029.
+  // Single-photo: tuned from Figma 242:7029 (top-left +8px right; bottom-right +4px right, +1px down).
   'around-image-1': [
-    { x:  38, y: 19, rot:   0,    size: 40 },  // left side
-    { x: 121, y: 68, rot:  -3.55, size: 24 },  // small top-right
+    { x:  46, y: 19, rot:   0,    size: 40 },  // top-left
+    { x: 125, y: 69, rot:  -3.55, size: 24 },  // bottom-right
   ],
   // No photo: stickers above the bubble (bubble ≈ y:74–108 in 149px-tall card).
   'around-bubble': [
