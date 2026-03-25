@@ -23,7 +23,7 @@ const MIC_STYLES = {
   // Visual height = 475 * 0.6 = 285px → mic sits in lower ~33% of screen, not centered
   recording: {
     // Scale up a bit and keep it anchored near the recording bubble.
-    transform:  'scale(1.15) rotate(0deg)',
+    transform:  'scale(1.2) rotate(0deg)',
     opacity:    1,
     transition: 'transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease',
   },
@@ -41,7 +41,7 @@ function MicHero({ mode }) {
       position: 'absolute',
       left: 0,
       // Move mic down a bit during recording.
-      bottom: mode === 'recording' ? 'calc(201px + 8px - 20px)' : 'calc(201px + 8px)',
+      bottom: mode === 'recording' ? 'calc(201px + 8px - 30px)' : 'calc(201px + 8px)',
       width: '100%', height: 475,
       zIndex: 38, pointerEvents: 'none',
       transformOrigin: 'center bottom',
