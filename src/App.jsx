@@ -6,6 +6,7 @@ import PostedMap from './screens/PostedMap';
 import MomentViewer from './screens/MomentViewer';
 import StatusBar from './components/StatusBar';
 import { MIC_IMAGE } from './assets';
+import { hapticRecordingLongPress } from './haptics';
 
 const FULL_TRANSCRIPT = '大自然让我感很平静';
 
@@ -225,8 +226,8 @@ export default function App() {
     if (recording) return;
     if (micTimerRef.current) clearTimeout(micTimerRef.current);
 
-    // Haptic feedback
-    navigator.vibrate?.(10);
+    // iOS: must run inside the same user activation as pointerdown (hold-to-record).
+    hapticRecordingLongPress();
 
     setRecording(true);
     setMicMode('recording');
