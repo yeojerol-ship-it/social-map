@@ -390,7 +390,9 @@ function bindMomentTapAndDrag(el, map) {
   mc2._momentTapBound = true;
   mc2.style.pointerEvents = 'auto';
   mc2.style.cursor = 'pointer';
-  mc2.style.touchAction = 'none';
+  // Allow native map drag/pan when the user is actually moving.
+  // We still handle clicks / photo peel separately.
+  mc2.style.touchAction = 'auto';
 
   let tapRestoreMap = null;
   const releaseTapLock = () => {
@@ -405,8 +407,37 @@ function bindMomentTapAndDrag(el, map) {
     // as a pan / zoom gesture.
     e.preventDefault();
     e.stopPropagation();
+
+    // Only suppress map gestures if this turns out to be a tap (small movement).
     releaseTapLock();
     tapRestoreMap = suppressMapPanForPhotoGesture(map);
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const pointerId = e.pointerId;
+    const MOVE_THRESHOLD = 12; // px
+
+    const onMove = (ev) => {
+      if (ev.pointerId !== pointerId) return;
+      const dx = ev.clientX - startX;
+      const dy = ev.clientY - startY;
+      if (dx * dx + dy * dy > MOVE_THRESHOLD * MOVE_THRESHOLD) {
+        // User is dragging, not tapping: restore map gestures immediately.
+        if (tapRestoreMap) tapRestoreMap();
+        tapRestoreMap = null;
+        window.removeEventListener('pointermove', onMove);
+      }
+    };
+
+    window.addEventListener('pointermove', onMove, { passive: true });
+    const onAnyUp = () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onAnyUp);
+      window.removeEventListener('pointercancel', onAnyUp);
+      // Let the normal restoration logic run.
+    };
+    window.addEventListener('pointerup', onAnyUp, { passive: true });
+    window.addEventListener('pointercancel', onAnyUp, { passive: true });
   });
 
   mc2.addEventListener('pointerup', (e) => {
