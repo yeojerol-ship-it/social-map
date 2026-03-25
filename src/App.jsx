@@ -207,6 +207,8 @@ const SCREENS = ['map', 'rec-done', 'add-photo', 'posted'];
 function AppDeviceFrame({ children }) {
   const hostRef = useRef(null);
   const [scale, setScale] = useState(1);
+  const [offsetY, setOffsetY] = useState(0);
+  const [offsetX, setOffsetX] = useState(0);
 
   useLayoutEffect(() => {
     const el = hostRef.current;
@@ -214,8 +216,22 @@ function AppDeviceFrame({ children }) {
     const update = () => {
       const w = el.clientWidth;
       const h = el.clientHeight;
-      const s = Math.min(1, w / APP_FRAME_W, h / APP_FRAME_H);
+      // On mobile Safari we want zero horizontal gutters: fill width.
+      // On wider screens, clamp to scale<=1 and center to avoid cropping.
+      const sFill = w / APP_FRAME_W;
+      const isMobileNarrow = w <= APP_FRAME_W + 1;
+      const s = isMobileNarrow ? sFill : Math.min(1, sFill);
+
+      const scaledW = APP_FRAME_W * s;
+      const scaledH = APP_FRAME_H * s;
+
+      const x = (scaledW <= w) ? (w - scaledW) / 2 : 0;
+      // If content is taller than the viewport, shift it up so the bottom stays visible.
+      const y = scaledH <= h ? 0 : (h - scaledH);
+
       setScale(s > 0 ? s : 1);
+      setOffsetX(Number.isFinite(x) ? x : 0);
+      setOffsetY(Number.isFinite(y) ? y : 0);
     };
     const ro = new ResizeObserver(update);
     ro.observe(el);
@@ -229,9 +245,6 @@ function AppDeviceFrame({ children }) {
       style={{
         position: 'fixed',
         inset: 0,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
         background: '#f6f4ea',
         overflow: 'hidden',
         boxSizing: 'border-box',
@@ -239,18 +252,20 @@ function AppDeviceFrame({ children }) {
     >
       <div
         style={{
-          width: APP_FRAME_W * scale,
-          height: APP_FRAME_H * scale,
+          width: APP_FRAME_W,
+          height: APP_FRAME_H,
           flexShrink: 0,
-          position: 'relative',
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          transformOrigin: 'top left',
+          transform: `translate(${offsetX}px, ${offsetY}px) scale(${scale})`,
         }}
       >
         <div
           style={{
-            width: APP_FRAME_W,
-            height: APP_FRAME_H,
-            transform: `scale(${scale})`,
-            transformOrigin: 'top left',
+            width: '100%',
+            height: '100%',
             position: 'relative',
             overflow: 'hidden',
             background: '#f6f4ea',
