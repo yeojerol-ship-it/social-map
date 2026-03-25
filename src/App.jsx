@@ -3,6 +3,7 @@ import MapFeed from './screens/MapFeed';
 import RecordingDone from './screens/RecordingDone';
 import AddPhoto from './screens/AddPhoto';
 import PostedMap from './screens/PostedMap';
+import MomentViewer from './screens/MomentViewer';
 import StatusBar from './components/StatusBar';
 import { MIC_IMAGE } from './assets';
 
@@ -129,12 +130,13 @@ function Overlay({ children, visible }) {
 const SCREENS = ['map', 'rec-done', 'add-photo', 'posted'];
 
 export default function App() {
-  const [screen, setScreen]         = useState('map');
-  const [recording, setRecording]   = useState(false);
-  const [micMode, setMicMode]       = useState('map');
-  const [liveText, setLiveText]     = useState('');
-  const [transcript, setTranscript] = useState(FULL_TRANSCRIPT);
-  const [newMoment, setNewMoment]   = useState(null);
+  const [screen, setScreen]                 = useState('map');
+  const [recording, setRecording]           = useState(false);
+  const [micMode, setMicMode]               = useState('map');
+  const [liveText, setLiveText]             = useState('');
+  const [transcript, setTranscript]         = useState(FULL_TRANSCRIPT);
+  const [newMoment, setNewMoment]           = useState(null);
+  const [selectedMoment, setSelectedMoment] = useState(null); // { html, moment }
   const liveRef        = useRef('');
   const recognitionRef = useRef(null);
   const micTimerRef    = useRef(null);
@@ -233,7 +235,7 @@ export default function App() {
       }
 
       setTranscript(captured);
-      setScreen('rec-done');
+      setScreen('add-photo');
       setMicMode('exit');
       micTimerRef.current = setTimeout(() => setMicMode('hidden'), 220);
     };
@@ -249,10 +251,8 @@ export default function App() {
 
   const go = (s) => setScreen(s);
 
-  // FrostLayer is visible during recording AND rec-done so blur never drops
-  // between RecordingOverlay unmounting and RecordingDone appearing.
-  // FrostLayer stays up across the full recording→rec-done→add-photo→snapped flow.
-  const isBlurred = recording || ['rec-done', 'add-photo'].includes(screen);
+  // FrostLayer stays up across the full recording→add-photo→snapped flow.
+  const isBlurred = recording || screen === 'add-photo';
 
   return (
     <div style={{
@@ -273,7 +273,7 @@ export default function App() {
           transition: 'opacity 0.3s ease',
           pointerEvents: screen === 'map' ? 'auto' : 'none',
         }}>
-          <MapFeed onRecord={startRec} recording={recording} newMoment={newMoment} />
+          <MapFeed onRecord={startRec} recording={recording} newMoment={newMoment} onMomentTap={setSelectedMoment} />
         </div>
 
         {/* FrostLayer — persistent blur over the live map.
@@ -305,8 +305,16 @@ export default function App() {
         </Overlay>
 
         <Overlay visible={screen === 'add-photo'}>
-          <AddPhoto visible={screen === 'add-photo'} transcript={transcript} onBack={() => go('rec-done')} onPost={handlePost} />
+          <AddPhoto visible={screen === 'add-photo'} transcript={transcript} onBack={() => go('map')} onPost={handlePost} />
         </Overlay>
+
+        {/* Moment viewer — tap any card on the map to open */}
+        <MomentViewer
+          visible={!!selectedMoment}
+          moment={selectedMoment?.moment}
+          stickers={selectedMoment?.stickers ?? []}
+          onClose={() => setSelectedMoment(null)}
+        />
 
         {/* RecordingOverlay — content only, no own blur (FrostLayer handles it) */}
         {recording && <RecordingOverlay liveText={liveText} />}

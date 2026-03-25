@@ -140,6 +140,23 @@ function injectStickers(el, layout) {
   });
 }
 
+// ─── Sticker extraction ───────────────────────────────────────────────────────
+// Reads sticker layout back from a live .mc2 element so it can be passed to
+// the MomentViewer as plain data (no DOM dependency in the viewer).
+function extractStickers(mc2) {
+  return Array.from(mc2.querySelectorAll('.mc2-sticker')).map(el => {
+    const img = el.querySelector('img');
+    const rot = parseFloat((el.style.transform || '').replace('rotate(', '').replace('deg)', '')) || 0;
+    return {
+      src:  img?.src  || '',
+      x:    parseFloat(el.style.left) || 0,
+      y:    parseFloat(el.style.top)  || 0,
+      rot,
+      size: img?.style.width ? parseFloat(img.style.width) : null,
+    };
+  });
+}
+
 // ─── Moment card element ──────────────────────────────────────────────────────
 // Creates ONE DOM element containing avatar, photos, and bubble.
 // Stickers are injected separately (async) after Gemini responds.
@@ -275,11 +292,13 @@ function Overlay({ onRecord, recording }) {
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
-export default function MapFeed({ onRecord, recording, newMoment }) {
+export default function MapFeed({ onRecord, recording, newMoment, onMomentTap }) {
   const containerRef    = useRef(null);
   const mapRef          = useRef(null);
   const addMomentRef    = useRef(null); // set inside map init, called from newMoment effect
   const locMarkerRef    = useRef(null); // tracks user's current lngLat
+  const onMomentTapRef  = useRef(onMomentTap);
+  useEffect(() => { onMomentTapRef.current = onMomentTap; }, [onMomentTap]);
 
   useEffect(() => {
     if (!TOKEN || !containerRef.current || mapRef.current) return;
@@ -303,6 +322,13 @@ export default function MapFeed({ onRecord, recording, newMoment }) {
       });
       ['landuse', 'landcover', 'national-park'].forEach((id) => {
         if (map.getLayer(id)) map.setPaintProperty(id, 'fill-color', '#C5ECAA');
+      });
+      // Replace orange motorway/trunk colour with muted blue
+      ['road-motorway-trunk', 'road-motorway-trunk-link'].forEach((id) => {
+        if (map.getLayer(id)) map.setPaintProperty(id, 'line-color', '#83A5C2');
+      });
+      ['road-motorway-trunk-case', 'road-motorway-trunk-link-case'].forEach((id) => {
+        if (map.getLayer(id)) map.setPaintProperty(id, 'line-color', '#6a8fad');
       });
     });
 
@@ -495,6 +521,14 @@ export default function MapFeed({ onRecord, recording, newMoment }) {
 
         // Create marker without stickers — renders immediately
         const el     = createMomentEl(moment);
+        const mc2    = el.querySelector('.mc2');
+        mc2.style.pointerEvents = 'auto';
+        mc2.style.cursor = 'pointer';
+        mc2.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const stickers = extractStickers(mc2);
+          onMomentTapRef.current?.({ moment, stickers });
+        });
         const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom-left' })
           .setLngLat(lngLat)
           .addTo(map);
@@ -572,6 +606,13 @@ export default function MapFeed({ onRecord, recording, newMoment }) {
 
       // Spring the new card in, then pulse a purple glow for 4s
       const mc2 = el.querySelector('.mc2');
+      mc2.style.pointerEvents = 'auto';
+      mc2.style.cursor = 'pointer';
+      mc2.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const stickers = extractStickers(mc2);
+        onMomentTapRef.current?.({ moment, stickers });
+      });
       mc2.style.opacity   = '0';
       mc2.style.transform = 'scale(0.6) translateY(12px)';
       requestAnimationFrame(() => requestAnimationFrame(() => {
