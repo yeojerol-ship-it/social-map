@@ -276,14 +276,19 @@ function Overlay({ onRecord, recording }) {
       }}>
         {/* 110px spacer so the button sits at the same y as before (FEED_MIC was 104px + 6px gap) */}
         <div style={{ height: 110 }} />
-        <button onPointerDown={e => { e.preventDefault(); onRecord(); }} style={{
-          width: 350, height: 60, borderRadius: 999,
-          background: 'black', border: 'none',
-          color: 'white', fontSize: 14, fontWeight: 600,
-          cursor: 'pointer', pointerEvents: 'auto',
-          boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
-          touchAction: 'none',
-        }}>
+        <button
+          onTouchStart={e => { e.preventDefault(); onRecord(); }}
+          onPointerDown={e => { if (e.pointerType !== 'touch') { e.preventDefault(); onRecord(); } }}
+          style={{
+            width: 350, height: 60, borderRadius: 999,
+            background: 'black', border: 'none',
+            color: 'white', fontSize: 14, fontWeight: 600,
+            cursor: 'pointer', pointerEvents: 'auto',
+            boxShadow: '0 4px 24px rgba(0,0,0,0.3)',
+            touchAction: 'none',
+            WebkitUserSelect: 'none',
+          }}
+        >
           说一下当下的感受
         </button>
       </div>

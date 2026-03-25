@@ -125,7 +125,7 @@ export default function PostedMap({ transcript, onRecord }) {
         {/* Bottom CTA */}
         <div style={{
           position: 'absolute', bottom: 0, left: 0, right: 0,
-          paddingBottom: 'max(32px, env(safe-area-inset-bottom, 0px))', paddingTop: 80,
+          paddingBottom: 'calc(max(32px, env(safe-area-inset-bottom, 0px)) + 12px)', paddingTop: 80,
           display: 'flex', flexDirection: 'column', alignItems: 'center',
           background: 'linear-gradient(to top, rgba(246,244,234,0.85) 0%, rgba(246,244,234,0.6) 60%, transparent 100%)',
         }}>

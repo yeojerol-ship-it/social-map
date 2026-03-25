@@ -153,7 +153,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
         position: 'absolute',
         left: '50%',
         transform: 'translateX(-50%)',
-        top: 'calc(72px + 48px + 16px)',
+        top: 'calc(72px + 48px + 16px + 40px)',
         width: VIEWPORT_WIDTH,
         maxWidth: 'calc(100% - 8px)',
         display: 'flex',
@@ -235,23 +235,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
                   style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
                 />
               </div>
-              {/* Connector dot — on diagonal between avatar top-right and bubble */}
-              <div
-                style={{
-                  position: 'absolute',
-                  left: 34,
-                  top: -10,
-                  width: 8,
-                  height: 8,
-                  borderRadius: '50%',
-                  background: 'white',
-                  zIndex: 3,
-                  opacity: bubbleIn ? 1 : 0,
-                  transform: bubbleIn ? 'scale(1)' : 'scale(0)',
-                  transition: 'opacity 0.25s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1)',
-                }}
-              />
-              {/* Speech bubble — top-right of avatar; x=30 y=-40 in avatar container */}
+              {/* Speech bubble cluster — top-right of avatar; x=30 y=-40 in avatar container */}
               <div
                 style={{
                   position: 'absolute',
@@ -261,13 +245,6 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
                   boxSizing: 'border-box',
                   width: 'max-content',
                   maxWidth: 220,
-                  backdropFilter: 'blur(4.35px)',
-                  WebkitBackdropFilter: 'blur(4.35px)',
-                  background: 'white',
-                  border: '1px solid rgba(255,255,255,0.4)',
-                  padding: '8px 16px',
-                  borderRadius: 24,
-                  boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
                   zIndex: 3,
                   opacity: bubbleIn ? 1 : 0,
                   transform: bubbleIn ? 'translateX(0px) scale(1)' : 'translateX(-10px) scale(0.88)',
@@ -275,39 +252,63 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
                   verticalAlign: 'top',
                 }}
               >
-                <p style={{
-                  margin: 0,
-                  fontSize: 20,
-                  fontWeight: 600,
-                  lineHeight: 1.3,
-                  color: 'rgba(0,0,0,0.65)',
-                  whiteSpace: 'normal',
-                  wordBreak: 'break-word',
-                  overflowWrap: 'break-word',
-                }}
+                <div
+                  style={{
+                    position: 'relative',
+                    display: 'inline-block',
+                    boxSizing: 'border-box',
+                    width: 'max-content',
+                    maxWidth: 220,
+                  }}
                 >
-                  {transcript}
-                </p>
+                  <div
+                    style={{
+                      display: 'inline-block',
+                      boxSizing: 'border-box',
+                      width: '100%',
+                      maxWidth: 220,
+                      backdropFilter: 'blur(4.35px)',
+                      WebkitBackdropFilter: 'blur(4.35px)',
+                      background: 'white',
+                      border: '1px solid rgba(255,255,255,0.4)',
+                      padding: '8px 16px',
+                      borderRadius: 24,
+                      boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+                    }}
+                  >
+                    <p style={{
+                      margin: 0,
+                      fontSize: 20,
+                      fontWeight: 600,
+                      lineHeight: 1.3,
+                      color: 'rgba(0,0,0,0.65)',
+                      whiteSpace: 'normal',
+                      wordBreak: 'break-word',
+                      overflowWrap: 'break-word',
+                    }}
+                    >
+                      {transcript}
+                    </p>
+                  </div>
+                  {/* 8×8 connector — same box as bubble; (x,y)=(-2,-2) from bottom-left for diagonal tail toward avatar */}
+                  <div
+                    aria-hidden
+                    style={{
+                      position: 'absolute',
+                      left: -2,
+                      bottom: -2,
+                      width: 8,
+                      height: 8,
+                      borderRadius: '50%',
+                      background: '#fff',
+                      boxShadow: '0 1px 4px rgba(0,0,0,0.06)',
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
-
-        <p style={{
-          margin: '12px 0 0',
-          textAlign: 'center',
-          fontSize: 15,
-          fontWeight: 600,
-          lineHeight: 1.3,
-          color: 'rgba(0,0,0,0.48)',
-          whiteSpace: 'nowrap',
-          opacity: snapped ? 0 : 1,
-          transition: 'opacity 0.2s ease',
-          pointerEvents: 'none',
-        }}
-        >
-          拍一下当下的画面
-        </p>
       </div>
 
       {/* Bottom controls — 40px spacing between flip / shutter / gallery */}
@@ -315,7 +316,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
         position: 'absolute',
         left: '50%',
         transform: 'translateX(-50%)',
-        bottom: 'max(12px, env(safe-area-inset-bottom, 0px))',
+        bottom: 'calc(max(12px, env(safe-area-inset-bottom, 0px)) + 12px)',
         width: VIEWPORT_WIDTH,
         maxWidth: 'calc(100% - 8px)',
         display: 'flex',
