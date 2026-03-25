@@ -51,8 +51,10 @@ body {
   min-height: 100dvh;
   min-height: 100lvh;
   min-height: -webkit-fill-available;
-  height: 100%;
-  max-height: 100%;
+  /* Avoid constraining height which can letterbox the fixed 0-inset layers */
+  height: 100lvh;
+  height: -webkit-fill-available;
+  max-height: none;
   overflow: hidden;
   overscroll-behavior: none;
   /* overflow:hidden only on desktop via media query below */
