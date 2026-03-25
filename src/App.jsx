@@ -37,9 +37,9 @@ function MicHero({ mode }) {
   if (mode === 'hidden') return null;
   return (
     <div style={{
-      position: 'absolute',
+      position: 'fixed',
       left: 0,
-      bottom: 'calc(201px + 8px + env(safe-area-inset-bottom, 0px))',
+      bottom: 'calc(201px + 8px)',
       width: '100%', height: 475,
       zIndex: 34, pointerEvents: 'none',
       transformOrigin: 'center bottom',
@@ -64,7 +64,7 @@ function RecordingOverlay({ liveText }) {
   }, []);
 
   return (
-    <div style={{ position: 'absolute', inset: 0, zIndex: 36, overflow: 'hidden', touchAction: 'none' }}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 36, overflow: 'hidden', touchAction: 'none' }}>
       <StatusBar />
 
       {/* Transcript or placeholder */}
@@ -85,7 +85,7 @@ function RecordingOverlay({ liveText }) {
 
       {/* Pulsating white bubble */}
       <div style={{
-        position: 'absolute', left: '50%', top: 'calc(100% - 201px - env(safe-area-inset-bottom, 0px))',
+        position: 'absolute', left: '50%', top: 'calc(100% - 201px)',
         transform: 'translateX(-50%)',
         width: 800, height: 800,
         pointerEvents: 'none',
@@ -102,7 +102,7 @@ function RecordingOverlay({ liveText }) {
 
       {/* Release hint */}
       <div style={{
-        position: 'absolute', bottom: 'max(100px, calc(66px + env(safe-area-inset-bottom)))', left: 0, width: '100%',
+        position: 'absolute', bottom: 'max(100px, calc(66px + env(safe-area-inset-bottom, 0px)))', left: 0, width: '100%',
         display: 'flex', justifyContent: 'center',
         opacity: entered ? 1 : 0,
         transition: 'opacity 0.3s ease',
@@ -119,7 +119,7 @@ function RecordingOverlay({ liveText }) {
 function Overlay({ children, visible }) {
   return (
     <div style={{
-      position: 'absolute', inset: 0, zIndex: 20,
+      position: 'fixed', inset: 0, zIndex: 20,
       transition: 'opacity 0.25s ease',
       opacity: visible ? 1 : 0,
       pointerEvents: visible ? 'auto' : 'none',
@@ -168,10 +168,6 @@ function DesignScreenShell({ children }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        paddingTop: 'env(safe-area-inset-top, 0px)',
-        paddingRight: 'env(safe-area-inset-right, 0px)',
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-        paddingLeft: 'env(safe-area-inset-left, 0px)',
         boxSizing: 'border-box',
       }}
     >
@@ -328,19 +324,20 @@ export default function App() {
 
   return (
     <div style={{
-      position: 'relative',
-      display: 'flex',
-      flexDirection: 'column',
+      position: 'fixed',
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
       width: '100%',
-      minHeight: '100dvh',
       height: '100%',
       overflow: 'hidden',
       background: '#f6f4ea',
       boxSizing: 'border-box',
     }}>
-        {/* Map — fixed to the visual viewport so Mapbox isn’t clipped by % height / #root sizing */}
+        {/* Map — edge-to-edge under status / home indicator (viewport-fit=cover) */}
         <div style={{
-          position: 'fixed',
+          position: 'absolute',
           inset: 0,
           width: '100%',
           height: '100%',
@@ -356,7 +353,7 @@ export default function App() {
             Stays at opacity:1 across the recording→rec-done boundary
             so the blur never drops between states. */}
         <div style={{
-          position: 'fixed', inset: 0, zIndex: 15,
+          position: 'absolute', inset: 0, zIndex: 15,
           backdropFilter: 'blur(16.25px)',
           WebkitBackdropFilter: 'blur(16.25px)',
           background: 'rgba(246,244,234,0.6)',

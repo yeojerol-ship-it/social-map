@@ -30,16 +30,21 @@ html, body, #root {
 
 html {
   min-height: 100dvh;
-  /* no overflow:hidden — background must extend into bottom safe area */
+  min-height: -webkit-fill-available;
+  height: 100%;
 }
 
 body {
   min-height: 100dvh;
-  /* no overflow:hidden — let the app shell handle clipping */
+  min-height: -webkit-fill-available;
+  height: 100%;
 }
 
 #root {
   min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  height: 100%;
+  width: 100%;
   /* overflow:hidden only on desktop via media query below */
 }
 

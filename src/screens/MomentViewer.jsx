@@ -14,7 +14,7 @@ function getViewerMargin() {
   const innerW = vv?.width ?? window.innerWidth;
   const padX = 48;
   const padTop = (vv?.offsetTop ?? 0) + 112;
-  const padBottom = 72;
+  const padBottom = 40;
   return { padX, padTop, padBottom, innerW, innerH };
 }
 
@@ -293,7 +293,7 @@ export default function MomentViewer({ visible, moment, stickers = [], onClose }
         position: 'fixed',
         inset: 0,
         width: '100%',
-        maxHeight: '100dvh',
+        height: '100%',
         zIndex: 50,
         pointerEvents: visible ? 'auto' : 'none',
       }}
@@ -317,7 +317,7 @@ export default function MomentViewer({ visible, moment, stickers = [], onClose }
         paddingLeft: 'max(20px, env(safe-area-inset-left, 0px))',
         paddingRight: 'max(20px, env(safe-area-inset-right, 0px))',
         paddingTop: 'max(88px, calc(env(safe-area-inset-top, 0px) + 72px))',
-        paddingBottom: 'max(32px, env(safe-area-inset-bottom, 0px))',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
         boxSizing: 'border-box',
         pointerEvents: 'none',
         zIndex: 2,
