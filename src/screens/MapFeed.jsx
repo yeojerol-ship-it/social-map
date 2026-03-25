@@ -517,6 +517,68 @@ function createClusterEl(avatars, count) {
 
 // ─── Overlay UI ───────────────────────────────────────────────────────────────
 function Overlay({ onRecord, recording }) {
+  const pressTimerRef = useRef(null);
+  const activePointerIdRef = useRef(null);
+  const onMoveRef = useRef(null);
+
+  const clearPress = () => {
+    if (pressTimerRef.current) {
+      window.clearTimeout(pressTimerRef.current);
+      pressTimerRef.current = null;
+    }
+    if (onMoveRef.current) {
+      window.removeEventListener('pointermove', onMoveRef.current);
+      onMoveRef.current = null;
+    }
+    activePointerIdRef.current = null;
+  };
+
+  const LONGPRESS_MS = 180; // shorter delay before recording starts
+
+  const startLongPress = (e) => {
+    if (recording) return;
+    // Ensure the long-press only activates from within the button.
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (e.pointerType === 'mouse' && e.button !== 0) return;
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+
+    clearPress();
+    activePointerIdRef.current = e.pointerId;
+    try { btn.setPointerCapture(e.pointerId); } catch (_) {}
+
+    pressTimerRef.current = window.setTimeout(() => {
+      pressTimerRef.current = null;
+      activePointerIdRef.current = null;
+      onRecord();
+    }, LONGPRESS_MS);
+
+    // Cancel if the pointer leaves the button bounds during the hold.
+    const onMove = (ev) => {
+      if (activePointerIdRef.current !== ev.pointerId) return;
+      const inside =
+        ev.clientX >= rect.left &&
+        ev.clientX <= rect.right &&
+        ev.clientY >= rect.top &&
+        ev.clientY <= rect.bottom;
+      if (!inside) {
+        window.removeEventListener('pointermove', onMove);
+        onMoveRef.current = null;
+        clearPress();
+      }
+    };
+    onMoveRef.current = onMove;
+    window.addEventListener('pointermove', onMove, { passive: true });
+  };
+
+  const endLongPress = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    clearPress();
+  };
+
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 10, pointerEvents: 'none' }}>
       <div style={{
@@ -555,8 +617,10 @@ function Overlay({ onRecord, recording }) {
         {/* 110px spacer so the button sits at the same y as before (FEED_MIC was 104px + 6px gap) */}
         <div style={{ height: 110 }} />
         <button
-          onTouchStart={e => { e.preventDefault(); onRecord(); }}
-          onPointerDown={e => { if (e.pointerType !== 'touch') { e.preventDefault(); onRecord(); } }}
+          onPointerDown={startLongPress}
+          onPointerUp={endLongPress}
+          onPointerCancel={endLongPress}
+          onPointerLeave={endLongPress}
           style={{
             width: 350, height: 60, borderRadius: 999,
             background: 'black', border: 'none',
