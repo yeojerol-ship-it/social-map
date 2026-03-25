@@ -677,7 +677,7 @@ export default function MapFeed({ onRecord, recording, newMoment, onMomentTap })
 
   if (!TOKEN) {
     return (
-      <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', minHeight: '100dvh', overflow: 'hidden' }}>
+      <div className="viewport-fill-min" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'hidden' }}>
         <img src={MAP_MAIN} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         <Overlay onRecord={onRecord} recording={recording} />
       </div>
@@ -685,12 +685,11 @@ export default function MapFeed({ onRecord, recording, newMoment, onMomentTap })
   }
 
   return (
-    <div style={{
+    <div className="viewport-fill-min" style={{
       position: 'absolute',
       inset: 0,
       width: '100%',
       height: '100%',
-      minHeight: '100dvh',
       overflow: 'hidden',
     }}>
       <div ref={containerRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }} />

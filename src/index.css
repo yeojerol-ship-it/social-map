@@ -17,11 +17,10 @@
 
 *:focus { outline: none; }
 
-/* Mobile base: full-bleed layout for iOS Safari with safe-area support.
-   min-height:100dvh on every root layer so no element is shorter than
-   the dynamic viewport. No overflow:hidden on html/body — the cream
-   background must bleed all the way to screen edges including safe areas.
-   Desktop overrides body to #111 via the 600px media query. */
+/* Mobile base: full-bleed on iOS (viewport-fit=cover).
+   100dvh can be shorter than the painted area when Safari’s UI shows/hides;
+   100lvh = largest viewport height; -webkit-fill-available matches WK’s fill height.
+   Desktop overrides body via the 600px media query. */
 html, body, #root {
   width: 100%;
   font-family: -apple-system, 'SF Pro Text', sans-serif;
@@ -29,23 +28,33 @@ html, body, #root {
 }
 
 html {
-  min-height: 100dvh;
-  min-height: -webkit-fill-available;
   height: 100%;
+  height: -webkit-fill-available;
 }
 
 body {
+  min-height: 100%;
   min-height: 100dvh;
+  min-height: 100lvh;
   min-height: -webkit-fill-available;
-  height: 100%;
 }
 
 #root {
+  min-height: 100%;
   min-height: 100dvh;
+  min-height: 100lvh;
   min-height: -webkit-fill-available;
   height: 100%;
-  width: 100%;
   /* overflow:hidden only on desktop via media query below */
+}
+
+/* Fixed / absolute roots that must cover the physical screen under the home indicator */
+.app-viewport-shell,
+.viewport-fill-min {
+  min-height: 100%;
+  min-height: 100dvh;
+  min-height: 100lvh;
+  min-height: -webkit-fill-available;
 }
 
 /* Desktop: iPhone 17 Pro simulator — flex centering + fixed frame */

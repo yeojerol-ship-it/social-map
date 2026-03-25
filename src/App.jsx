@@ -65,7 +65,7 @@ function RecordingOverlay({ liveText }) {
   }, []);
 
   return (
-    <div style={{ position: 'fixed', inset: 0, zIndex: 36, overflow: 'hidden', touchAction: 'none' }}>
+    <div className="viewport-fill-min" style={{ position: 'fixed', inset: 0, zIndex: 36, overflow: 'hidden', touchAction: 'none' }}>
       <StatusBar />
 
       {/* Transcript or placeholder */}
@@ -119,7 +119,7 @@ function RecordingOverlay({ liveText }) {
 // ─── Overlay screen wrapper ───────────────────────────────────────────────────
 function Overlay({ children, visible }) {
   return (
-    <div style={{
+    <div className="viewport-fill-min" style={{
       position: 'fixed', inset: 0, zIndex: 20,
       transition: 'opacity 0.25s ease',
       opacity: visible ? 1 : 0,
@@ -163,6 +163,7 @@ function DesignScreenShell({ children }) {
   return (
     <div
       ref={hostRef}
+      className="viewport-fill-min"
       style={{
         position: 'absolute',
         inset: 0,
@@ -324,20 +325,23 @@ export default function App() {
   const isBlurred = recording || screen === 'add-photo';
 
   return (
-    <div style={{
-      position: 'fixed',
-      left: 0,
-      top: 0,
-      right: 0,
-      bottom: 0,
-      width: '100%',
-      height: '100%',
-      overflow: 'hidden',
-      background: '#f6f4ea',
-      boxSizing: 'border-box',
-    }}>
+    <div
+      className="app-viewport-shell"
+      style={{
+        position: 'fixed',
+        left: 0,
+        top: 0,
+        right: 0,
+        bottom: 0,
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        background: '#f6f4ea',
+        boxSizing: 'border-box',
+      }}
+    >
         {/* Map — edge-to-edge under status / home indicator (viewport-fit=cover) */}
-        <div style={{
+        <div className="viewport-fill-min" style={{
           position: 'absolute',
           inset: 0,
           width: '100%',
@@ -353,7 +357,7 @@ export default function App() {
         {/* FrostLayer — persistent blur over the live map.
             Stays at opacity:1 across the recording→rec-done boundary
             so the blur never drops between states. */}
-        <div style={{
+        <div className="viewport-fill-min" style={{
           position: 'absolute', inset: 0, zIndex: 15,
           backdropFilter: 'blur(16.25px)',
           WebkitBackdropFilter: 'blur(16.25px)',
