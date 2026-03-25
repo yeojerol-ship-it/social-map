@@ -216,22 +216,17 @@ function AppDeviceFrame({ children }) {
     const update = () => {
       const w = el.clientWidth;
       const h = el.clientHeight;
-      // On mobile Safari we want zero horizontal gutters: fill width.
-      // On wider screens, clamp to scale<=1 and center to avoid cropping.
-      const sFill = w / APP_FRAME_W;
-      const isMobileNarrow = w <= APP_FRAME_W + 1;
-      const s = isMobileNarrow ? sFill : Math.min(1, sFill);
+      // Scale to fit both dimensions, preventing a beige strip at the bottom.
+      // If the scaled canvas is shorter than the viewport, we bottom-align it.
+      const sByW = w / APP_FRAME_W;
+      const sByH = h / APP_FRAME_H;
+      const s = Math.min(sByW, sByH);
 
       const scaledW = APP_FRAME_W * s;
       const scaledH = APP_FRAME_H * s;
 
-      const x = (scaledW <= w) ? (w - scaledW) / 2 : 0;
-      // Do not translate vertically to "fit" the entire app.
-      // On iOS Safari, clientHeight/visualViewport can fluctuate due to the
-      // dynamic URL bar/toolbar, causing the whole UI to jump upward and
-      // appear as if a bottom cut-out is blocking the experience.
-      // Bottom CTA usability is handled by per-screen safe-area padding.
-      const y = 0;
+      const x = scaledW < w ? (w - scaledW) / 2 : 0;
+      const y = scaledH < h ? (h - scaledH) : 0;
 
       setScale(s > 0 ? s : 1);
       setOffsetX(Number.isFinite(x) ? x : 0);
