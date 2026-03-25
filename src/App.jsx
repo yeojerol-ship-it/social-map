@@ -226,8 +226,12 @@ function AppDeviceFrame({ children }) {
       const scaledH = APP_FRAME_H * s;
 
       const x = (scaledW <= w) ? (w - scaledW) / 2 : 0;
-      // If content is taller than the viewport, shift it up so the bottom stays visible.
-      const y = scaledH <= h ? 0 : (h - scaledH);
+      // Do not translate vertically to "fit" the entire app.
+      // On iOS Safari, clientHeight/visualViewport can fluctuate due to the
+      // dynamic URL bar/toolbar, causing the whole UI to jump upward and
+      // appear as if a bottom cut-out is blocking the experience.
+      // Bottom CTA usability is handled by per-screen safe-area padding.
+      const y = 0;
 
       setScale(s > 0 ? s : 1);
       setOffsetX(Number.isFinite(x) ? x : 0);
