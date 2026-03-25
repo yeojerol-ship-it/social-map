@@ -533,7 +533,10 @@ function Overlay({ onRecord, recording }) {
     activePointerIdRef.current = null;
   };
 
-  const LONGPRESS_MS = 180; // shorter delay before recording starts
+  // Long-press duration before recording starts.
+  // Kept long enough that a normal tap won't trigger recording,
+  // but short enough to feel responsive on mobile web.
+  const LONGPRESS_MS = 260;
 
   const startLongPress = (e) => {
     if (recording) return;
