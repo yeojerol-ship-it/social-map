@@ -42,7 +42,7 @@ function MicHero({ mode }) {
       left: 0,
       bottom: 'calc(201px + 8px)',
       width: '100%', height: 475,
-      zIndex: 34, pointerEvents: 'none',
+      zIndex: 38, pointerEvents: 'none',
       transformOrigin: 'center bottom',
       ...MIC_STYLES[mode],
     }}>
@@ -429,7 +429,9 @@ export default function App() {
               visible={screen === 'rec-done'}
               transcript={transcript}
               onAddPhoto={() => go('add-photo')}
-              onPost={() => go('posted')}
+              // Force the user through AddPhoto; do not jump to "uploaded" UI
+              // without taking a new photo for this moment.
+              onPost={() => go('add-photo')}
               onClose={() => go('map')}
             />
           </DesignScreenShell>
