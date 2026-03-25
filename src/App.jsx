@@ -3,7 +3,6 @@ import MapFeed from './screens/MapFeed';
 import RecordingDone from './screens/RecordingDone';
 import AddPhoto from './screens/AddPhoto';
 import PostedMap from './screens/PostedMap';
-import MomentViewer from './screens/MomentViewer';
 import StatusBar from './components/StatusBar';
 import { MIC_IMAGE } from './assets';
 import { hapticRecordingLongPress } from './haptics';
@@ -402,7 +401,7 @@ export default function App() {
           transition: 'opacity 0.3s ease',
           pointerEvents: screen === 'map' ? 'auto' : 'none',
         }}>
-          <MapFeed onRecord={startRec} recording={recording} newMoment={newMoment} onMomentTap={setSelectedMoment} />
+          <MapFeed onRecord={startRec} recording={recording} newMoment={newMoment} />
         </div>
 
         {/* FrostLayer — persistent blur over the live map.
@@ -440,14 +439,6 @@ export default function App() {
         <Overlay visible={screen === 'add-photo'}>
           <AddPhoto visible={screen === 'add-photo'} transcript={transcript} onBack={() => go('map')} onPost={handlePost} />
         </Overlay>
-
-        {/* Moment viewer — tap any card on the map to open */}
-        <MomentViewer
-          visible={!!selectedMoment}
-          moment={selectedMoment?.moment}
-          stickers={selectedMoment?.stickers ?? []}
-          onClose={() => setSelectedMoment(null)}
-        />
 
         {/* RecordingOverlay — content only, no own blur (FrostLayer handles it) */}
         {recording && <RecordingOverlay liveText={liveText} />}

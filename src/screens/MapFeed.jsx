@@ -32,7 +32,7 @@ import {
   NP1, NP2, NP3, NP4, NP5, NP6, NP7, NP8,
 } from '../assets';
 import { analyzeMoment }              from '../services/openai';
-import { getStickerLayout, getFallbackLayout } from '../stickers';
+import { getStickerLayout, getFallbackLayout, STICKER_PACK } from '../stickers';
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const TOKEN          = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -129,10 +129,10 @@ function screenSpaceCluster(map, moments, radius) {
 function injectStickers(el, layout) {
   const mc2 = el.querySelector('.mc2');
   if (!mc2) return;
-  mc2.querySelectorAll('.mc2-sticker').forEach(s => s.remove());
+  mc2.querySelectorAll('.mc2-sticker--ai').forEach(s => s.remove());
   layout.forEach(({ src, x, y, rot, size }) => {
     const div = document.createElement('div');
-    div.className = 'mc2-sticker';
+    div.className = 'mc2-sticker mc2-sticker--ai';
     div.style.cssText = `left:${x}px;top:${y}px;transform:rotate(${rot}deg)`;
     const sizeStyle = size ? `width:${size}px;height:${size}px;` : '';
     div.innerHTML = `<img src="${src}" alt="" class="mc2-sticker-img" style="${sizeStyle}"/>`;
@@ -140,21 +140,210 @@ function injectStickers(el, layout) {
   });
 }
 
-// ─── Sticker extraction ───────────────────────────────────────────────────────
-// Reads sticker layout back from a live .mc2 element so it can be passed to
-// the MomentViewer as plain data (no DOM dependency in the viewer).
-function extractStickers(mc2) {
-  return Array.from(mc2.querySelectorAll('.mc2-sticker')).map(el => {
-    const img = el.querySelector('img');
-    const rot = parseFloat((el.style.transform || '').replace('rotate(', '').replace('deg)', '')) || 0;
-    return {
-      src:  img?.src  || '',
-      x:    parseFloat(el.style.left) || 0,
-      y:    parseFloat(el.style.top)  || 0,
-      rot,
-      size: img?.style.width ? parseFloat(img.style.width) : null,
-    };
+// ─── Tap-to-like: sporadic stickers around the card (accumulates with repeat taps) ───
+const REACTION_SOURCES = [
+  STICKER_PACK.heart, STICKER_PACK.star, STICKER_PACK.sparkle,
+  STICKER_PACK.confetti, STICKER_PACK.paw, STICKER_PACK.flower,
+];
+
+const REACTION_SPRING_MS = 520;
+const REACTION_HOLD_MS   = 2000;
+const REACTION_FADE_MS   = 450;
+
+function spawnReactionBurst(mc2) {
+  const w = mc2.offsetWidth || 200;
+  const h = mc2.offsetHeight || 169;
+  const cx = w / 2;
+  const cy = h / 2;
+  mc2._reactionClicks = (mc2._reactionClicks || 0) + 1;
+  const count = 2 + Math.min(mc2._reactionClicks, 10);
+  const rMax = Math.min(w, h) * 0.42;
+  const springEasing = 'cubic-bezier(0.28, 1.15, 0.32, 1.22)';
+
+  for (let i = 0; i < count; i++) {
+    const ang = Math.random() * Math.PI * 2;
+    const r = 28 + Math.random() * rMax;
+    const x = cx + Math.cos(ang) * r - 15;
+    const y = cy + Math.sin(ang) * r - 15;
+    const rot = (Math.random() - 0.5) * 56;
+    const size = Math.round(22 + Math.random() * 14);
+    const src = REACTION_SOURCES[(Math.random() * REACTION_SOURCES.length) | 0];
+    const popDy = 10 + Math.random() * 14;
+    const delay = i * 42 + ((Math.random() * 55) | 0);
+
+    const div = document.createElement('div');
+    div.className = 'mc2-sticker mc2-sticker--reaction';
+    div.style.cssText = [
+      `left:${x}px`,
+      `top:${y + popDy}px`,
+      `transform:rotate(${rot}deg) scale(0.08)`,
+      'z-index:5',
+      'opacity:0',
+      'transition:none',
+      'will-change:transform,opacity',
+    ].join(';');
+
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = '';
+    img.className = 'mc2-sticker-img';
+    img.style.width = `${size}px`;
+    img.style.height = `${size}px`;
+    img.draggable = false;
+    div.appendChild(img);
+    mc2.appendChild(div);
+
+    window.setTimeout(() => {
+      div.style.transition =
+        `top ${REACTION_SPRING_MS}ms ${springEasing},` +
+        `transform ${REACTION_SPRING_MS}ms ${springEasing},` +
+        'opacity 0.32s ease-out';
+      requestAnimationFrame(() => {
+        div.style.top = `${y}px`;
+        div.style.opacity = '1';
+        div.style.transform = `rotate(${rot}deg) scale(1)`;
+      });
+    }, delay);
+
+    window.setTimeout(() => {
+      div.style.willChange = 'opacity';
+      div.style.transition = `opacity ${REACTION_FADE_MS}ms ease-out`;
+      requestAnimationFrame(() => { div.style.opacity = '0'; });
+      const remove = () => { div.remove(); };
+      div.addEventListener('transitionend', remove, { once: true });
+      window.setTimeout(remove, REACTION_FADE_MS + 80);
+    }, delay + REACTION_HOLD_MS);
+  }
+}
+
+/** Disable map pan/zoom while peeling a photo so the gesture does not fight the marker. */
+function suppressMapPanForPhotoGesture(map) {
+  if (!map) return () => {};
+  try { map.dragPan.disable(); } catch (_) {}
+  try { map.scrollZoom.disable(); } catch (_) {}
+  try { map.touchZoomRotate.disable(); } catch (_) {}
+  try { map.doubleClickZoom.disable(); } catch (_) {}
+  return () => {
+    try { map.dragPan.enable(); } catch (_) {}
+    try { map.scrollZoom.enable(); } catch (_) {}
+    try { map.touchZoomRotate.enable(); } catch (_) {}
+    try { map.doubleClickZoom.enable(); } catch (_) {}
+  };
+}
+
+// ─── Photo peel: drag like MomentViewer; release snaps back into the card ───
+const PHOTO_DRAG_THRESHOLD = 10;
+
+function setupMapPhotoDrag(mc2, map) {
+  const slots = [
+    { innerSel: '.mc2-p1-inner', imgSel: '.mc2-p1-img', rot: -12 },
+    { innerSel: '.mc2-p2-inner', imgSel: '.mc2-p2-img', rot: 10.12 },
+    { innerSel: '.mc2-p-single-inner', imgSel: '.mc2-p-single-img', rot: 4 },
+  ];
+
+  for (const { innerSel, imgSel, rot } of slots) {
+    const inner = mc2.querySelector(innerSel);
+    const img = mc2.querySelector(imgSel);
+    if (!inner || !img || inner._mapPhotoDragBound) continue;
+    inner._mapPhotoDragBound = true;
+    inner.style.touchAction = 'none';
+    inner.style.cursor = 'grab';
+
+    inner.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      e.stopPropagation();
+      const restoreMap = suppressMapPanForPhotoGesture(map);
+
+      const startX = e.clientX;
+      const startY = e.clientY;
+      let floatEl = null;
+      let rw = 0;
+      let rh = 0;
+
+      const onMove = (ev) => {
+        if (!floatEl) {
+          const dx = ev.clientX - startX;
+          const dy = ev.clientY - startY;
+          if (dx * dx + dy * dy < PHOTO_DRAG_THRESHOLD * PHOTO_DRAG_THRESHOLD) return;
+          const br = img.getBoundingClientRect();
+          rw = br.width;
+          rh = br.height;
+          floatEl = document.createElement('img');
+          floatEl.src = img.src;
+          floatEl.draggable = false;
+          floatEl.style.cssText = [
+            'position:fixed',
+            `left:${ev.clientX - rw / 2}px`,
+            `top:${ev.clientY - rh / 2}px`,
+            `width:${rw}px`,
+            `height:${rh}px`,
+            'object-fit:cover',
+            'border-radius:12px',
+            'border:2px solid #f6f4ea',
+            'box-shadow:0 8px 28px rgba(0,0,0,0.28)',
+            'z-index:10000',
+            'pointer-events:none',
+            `transform:rotate(${rot}deg)`,
+            'transition:none',
+          ].join(';');
+          document.body.appendChild(floatEl);
+          img.style.opacity = '0';
+        } else {
+          floatEl.style.left = `${ev.clientX - rw / 2}px`;
+          floatEl.style.top = `${ev.clientY - rh / 2}px`;
+        }
+      };
+
+      const cleanUp = (ev) => {
+        window.removeEventListener('pointermove', onMove);
+        window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onUp);
+        try { inner.releasePointerCapture(e.pointerId); } catch (_) {}
+
+        if (floatEl) {
+          const target = img.getBoundingClientRect();
+          floatEl.style.transition = 'left 0.34s cubic-bezier(0.34,1.56,0.64,1), top 0.34s cubic-bezier(0.34,1.56,0.64,1)';
+          floatEl.style.left = `${target.left}px`;
+          floatEl.style.top = `${target.top}px`;
+
+          let finished = false;
+          const finish = () => {
+            if (finished) return;
+            finished = true;
+            floatEl.remove();
+            img.style.opacity = '1';
+          };
+          floatEl.addEventListener('transitionend', finish, { once: true });
+          setTimeout(finish, 420);
+        } else {
+          spawnReactionBurst(mc2);
+        }
+      };
+
+      const onUp = (ev) => cleanUp(ev);
+
+      inner.setPointerCapture(e.pointerId);
+      window.addEventListener('pointermove', onMove);
+      window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onUp);
+    });
+  }
+}
+
+function bindMomentTapAndDrag(el) {
+  const mc2 = el.querySelector('.mc2');
+  if (!mc2 || mc2._momentTapBound) return;
+  mc2._momentTapBound = true;
+  mc2.style.pointerEvents = 'auto';
+  mc2.style.cursor = 'pointer';
+
+  mc2.addEventListener('click', (e) => {
+    if (e.target.closest('.mc2-p1-inner, .mc2-p2-inner, .mc2-p-single-inner')) return;
+    e.stopPropagation();
+    spawnReactionBurst(mc2);
   });
+
+  setupMapPhotoDrag(mc2);
 }
 
 // ─── Moment card element ──────────────────────────────────────────────────────
@@ -297,13 +486,11 @@ function Overlay({ onRecord, recording }) {
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
-export default function MapFeed({ onRecord, recording, newMoment, onMomentTap }) {
+export default function MapFeed({ onRecord, recording, newMoment }) {
   const containerRef    = useRef(null);
   const mapRef          = useRef(null);
   const addMomentRef    = useRef(null); // set inside map init, called from newMoment effect
   const locMarkerRef    = useRef(null); // tracks user's current lngLat
-  const onMomentTapRef  = useRef(onMomentTap);
-  useEffect(() => { onMomentTapRef.current = onMomentTap; }, [onMomentTap]);
 
   useEffect(() => {
     if (!TOKEN || !containerRef.current || mapRef.current) return;
@@ -526,14 +713,7 @@ export default function MapFeed({ onRecord, recording, newMoment, onMomentTap })
 
         // Create marker without stickers — renders immediately
         const el     = createMomentEl(moment);
-        const mc2    = el.querySelector('.mc2');
-        mc2.style.pointerEvents = 'auto';
-        mc2.style.cursor = 'pointer';
-        mc2.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const stickers = extractStickers(mc2);
-          onMomentTapRef.current?.({ moment, stickers });
-        });
+        bindMomentTapAndDrag(el);
         const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom-left' })
           .setLngLat(lngLat)
           .addTo(map);
@@ -609,15 +789,10 @@ export default function MapFeed({ onRecord, recording, newMoment, onMomentTap })
 
       state.moments.push({ moment, marker, inCluster: false, clusterLngLat: null });
 
+      bindMomentTapAndDrag(el);
+
       // Spring the new card in, then pulse a purple glow for 4s
       const mc2 = el.querySelector('.mc2');
-      mc2.style.pointerEvents = 'auto';
-      mc2.style.cursor = 'pointer';
-      mc2.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const stickers = extractStickers(mc2);
-        onMomentTapRef.current?.({ moment, stickers });
-      });
       mc2.style.opacity   = '0';
       mc2.style.transform = 'scale(0.6) translateY(12px)';
       requestAnimationFrame(() => requestAnimationFrame(() => {
