@@ -198,68 +198,82 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
             )}
           </div>
 
-          {/* Avatar 20px inset from viewfinder; bubble at top-right of avatar; dot on connector (mc2-style). */}
+          {/* Avatar cluster: 20px inset from viewfinder; bubble + dot in avatar coords (30, -40), overflow visible. */}
           <div
             style={{
               position: 'absolute',
               left: 20,
               top: 20,
-              width: 40,
-              height: 40,
-              borderRadius: 999,
-              overflow: 'hidden',
               zIndex: 2,
-              opacity: avatarIn ? 1 : 0,
-              transform: avatarIn ? 'translateY(0px) scale(1)' : 'translateY(14px) scale(0.7)',
-              transition: 'opacity 0.3s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1)',
+              overflow: 'visible',
               pointerEvents: 'none',
             }}
           >
-            <img
-              src={USER_AVATAR_REC} alt="me"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-            />
-          </div>
-          <div
-            style={{
-              position: 'absolute',
-              left: 50,
-              top: 22,
-              width: 8,
-              height: 8,
-              borderRadius: '50%',
-              background: 'white',
-              zIndex: 3,
-              opacity: bubbleIn ? 1 : 0,
-              transform: bubbleIn ? 'scale(1)' : 'scale(0)',
-              transition: 'opacity 0.25s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1)',
-              pointerEvents: 'none',
-            }}
-          />
-          <div
-            style={{
-              position: 'absolute',
-              left: 56,
-              top: 6,
-              maxWidth: 'min(220px, calc(100% - 72px))',
-              width: 'fit-content',
-              backdropFilter: 'blur(4.35px)',
-              WebkitBackdropFilter: 'blur(4.35px)',
-              background: 'white',
-              border: '1px solid rgba(255,255,255,0.4)',
-              padding: '8px 16px',
-              borderRadius: 24,
-              boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-              zIndex: 3,
-              opacity: bubbleIn ? 1 : 0,
-              transform: bubbleIn ? 'translateX(0px) scale(1)' : 'translateX(-10px) scale(0.88)',
-              transition: 'opacity 0.3s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1)',
-              pointerEvents: 'none',
-            }}
-          >
-            <p style={{ margin: 0, fontSize: 20, fontWeight: 600, lineHeight: 1.3, color: 'rgba(0,0,0,0.65)' }}>
-              {transcript}
-            </p>
+            <div
+              style={{
+                position: 'relative',
+                width: 40,
+                height: 40,
+              }}
+            >
+              <div
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: 999,
+                  overflow: 'hidden',
+                  opacity: avatarIn ? 1 : 0,
+                  transform: avatarIn ? 'translateY(0px) scale(1)' : 'translateY(14px) scale(0.7)',
+                  transition: 'opacity 0.3s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1)',
+                }}
+              >
+                <img
+                  src={USER_AVATAR_REC} alt="me"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
+              </div>
+              {/* Connector dot — on diagonal between avatar top-right and bubble */}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 34,
+                  top: -10,
+                  width: 8,
+                  height: 8,
+                  borderRadius: '50%',
+                  background: 'white',
+                  zIndex: 3,
+                  opacity: bubbleIn ? 1 : 0,
+                  transform: bubbleIn ? 'scale(1)' : 'scale(0)',
+                  transition: 'opacity 0.25s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1)',
+                }}
+              />
+              {/* Speech bubble — top-right of avatar; x=30 y=-40 in avatar container */}
+              <div
+                style={{
+                  position: 'absolute',
+                  left: 30,
+                  top: -40,
+                  width: 'fit-content',
+                  maxWidth: 'min(220px, calc(100vw - 100px))',
+                  backdropFilter: 'blur(4.35px)',
+                  WebkitBackdropFilter: 'blur(4.35px)',
+                  background: 'white',
+                  border: '1px solid rgba(255,255,255,0.4)',
+                  padding: '8px 16px',
+                  borderRadius: 24,
+                  boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+                  zIndex: 3,
+                  opacity: bubbleIn ? 1 : 0,
+                  transform: bubbleIn ? 'translateX(0px) scale(1)' : 'translateX(-10px) scale(0.88)',
+                  transition: 'opacity 0.3s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1)',
+                }}
+              >
+                <p style={{ margin: 0, fontSize: 20, fontWeight: 600, lineHeight: 1.3, color: 'rgba(0,0,0,0.65)' }}>
+                  {transcript}
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
