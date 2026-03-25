@@ -38,7 +38,7 @@ function MicHero({ mode }) {
   if (mode === 'hidden') return null;
   return (
     <div style={{
-      position: 'fixed',
+      position: 'absolute',
       left: 0,
       bottom: 'calc(201px + 8px)',
       width: '100%', height: 475,
@@ -65,7 +65,7 @@ function RecordingOverlay({ liveText }) {
   }, []);
 
   return (
-    <div className="viewport-fill-min" style={{ position: 'fixed', inset: 0, zIndex: 36, overflow: 'hidden', touchAction: 'none' }}>
+    <div className="viewport-fill-min" style={{ position: 'absolute', inset: 0, zIndex: 36, overflow: 'hidden', touchAction: 'none' }}>
       <StatusBar />
 
       {/* Transcript or placeholder */}
@@ -120,7 +120,7 @@ function RecordingOverlay({ liveText }) {
 function Overlay({ children, visible }) {
   return (
     <div className="viewport-fill-min" style={{
-      position: 'fixed', inset: 0, zIndex: 20,
+      position: 'absolute', inset: 0, zIndex: 20,
       transition: 'opacity 0.25s ease',
       opacity: visible ? 1 : 0,
       pointerEvents: visible ? 'auto' : 'none',
@@ -131,7 +131,10 @@ function Overlay({ children, visible }) {
 }
 
 const DESIGN_W = 390;
-const DESIGN_H = 844;
+const DESIGN_H = 840;
+
+const APP_FRAME_W = 390;
+const APP_FRAME_H = 840;
 
 /** Scales the fixed Figma-sized screen to fit the visible area inside safe zones (prevents bottom controls being clipped). */
 function DesignScreenShell({ children }) {
@@ -150,7 +153,7 @@ function DesignScreenShell({ children }) {
         (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
       const w = el.clientWidth - padX;
       const h = el.clientHeight - padY;
-      const s = Math.min(1, (w > 0 ? w / DESIGN_W : 1), (h > 0 ? h / DESIGN_H : 1));
+      const s = Math.min(1, (w > 0 ? w / APP_FRAME_W : 1), (h > 0 ? h / APP_FRAME_H : 1));
       setScale(s || 1);
     };
 
@@ -198,6 +201,68 @@ function DesignScreenShell({ children }) {
 }
 
 const SCREENS = ['map', 'rec-done', 'add-photo', 'posted'];
+
+/** Full app runs in a fixed 390×840 logical canvas, centered and scaled down if the device is smaller. */
+function AppDeviceFrame({ children }) {
+  const hostRef = useRef(null);
+  const [scale, setScale] = useState(1);
+
+  useLayoutEffect(() => {
+    const el = hostRef.current;
+    if (!el) return;
+    const update = () => {
+      const w = el.clientWidth;
+      const h = el.clientHeight;
+      const s = Math.min(1, w / APP_FRAME_W, h / APP_FRAME_H);
+      setScale(s > 0 ? s : 1);
+    };
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    update();
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={hostRef}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#f6f4ea',
+        overflow: 'hidden',
+        boxSizing: 'border-box',
+      }}
+    >
+      <div
+        style={{
+          width: APP_FRAME_W * scale,
+          height: APP_FRAME_H * scale,
+          flexShrink: 0,
+          position: 'relative',
+        }}
+      >
+        <div
+          style={{
+            width: APP_FRAME_W,
+            height: APP_FRAME_H,
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+            position: 'relative',
+            overflow: 'hidden',
+            background: '#f6f4ea',
+          }}
+        >
+          <div className="app-frame-content" style={{ background: '#f6f4ea' }}>
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const [screen, setScreen]                 = useState('map');
@@ -325,17 +390,8 @@ export default function App() {
   const isBlurred = recording || screen === 'add-photo';
 
   return (
-    <div
-      className="app-viewport-shell"
-      style={{
-        position: 'fixed',
-        inset: 0,
-        overflow: 'hidden',
-        background: '#f6f4ea',
-        boxSizing: 'border-box',
-      }}
-    >
-        {/* Map — edge-to-edge under status / home indicator (viewport-fit=cover) */}
+    <AppDeviceFrame>
+        {/* Map — edge-to-edge within 390×840 frame */}
         <div className="viewport-fill-min" style={{
           position: 'absolute',
           inset: 0,
@@ -396,6 +452,6 @@ export default function App() {
 
         {/* MicHero — single mic across map + recording states */}
         <MicHero mode={micMode} />
-      </div>
+    </AppDeviceFrame>
   );
 }

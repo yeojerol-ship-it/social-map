@@ -73,6 +73,15 @@ body {
   -webkit-overflow-scrolling: auto;
 }
 
+/* Strict 390×840 app frame (logical pixels); no lvh — parent sets height */
+.app-frame-content {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+}
+
 /* Desktop: iPhone 17 Pro simulator — flex centering + fixed frame */
 @media (min-width: 600px) {
   body {
