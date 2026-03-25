@@ -94,11 +94,11 @@ body {
     overscroll-behavior: auto;
   }
   #root {
-    width: 393px;
-    height: 852px;
+    width: 430px;
+    height: 932px;
     min-height: unset;
     max-height: none;
-    border-radius: 44px;
+    border-radius: 48px;
     overflow: hidden;
     flex-shrink: 0;
     overscroll-behavior: auto;
