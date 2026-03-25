@@ -4,6 +4,32 @@ const X_MARK_URL = 'https://www.figma.com/api/mcp/asset/55a3cc08-6f30-44be-a965-
 
 const MAX_SCALE = 2.2;
 
+/** Insets so the scaled card (and absolute stickers) fit inside the visual viewport. */
+function getViewerMargin() {
+  const vv = window.visualViewport;
+  const innerH = vv?.height ?? window.innerHeight;
+  const padX = 40;
+  const padTop = (vv?.offsetTop ?? 0) + 96; // close control + status area
+  const padBottom = 56; // home indicator / thumb clearance
+  return { padX, padTop, padBottom, innerW: window.innerWidth, innerH };
+}
+
+function computeCardScale(cardEl) {
+  if (!cardEl || cardEl.offsetWidth <= 0 || cardEl.offsetHeight <= 0) return 1;
+  const w = cardEl.offsetWidth;
+  const h = cardEl.offsetHeight;
+  // Stickers are position:absolute; they don't grow offsetHeight — add slack for overflow + rotation.
+  const stickerSlack = 48;
+  const effW = w + stickerSlack;
+  const effH = h + stickerSlack;
+  const { padX, padTop, padBottom, innerW, innerH } = getViewerMargin();
+  const availW = Math.max(64, innerW - padX);
+  const availH = Math.max(64, innerH - padTop - padBottom);
+  const scaleW = availW / effW;
+  const scaleH = availH / effH;
+  return Math.min(MAX_SCALE, scaleW, scaleH);
+}
+
 const PHOTO_SLOTS = {
   p1:     { wrapClass: 'mc2-p1-wrap',       innerClass: 'mc2-p1-inner',       imgClass: 'mc2-p1-img',       rot: -12,   nativeSize: 56.963 },
   p2:     { wrapClass: 'mc2-p2-wrap',       innerClass: 'mc2-p2-inner',       imgClass: 'mc2-p2-img',       rot: 10.12, nativeSize: 67.019 },
@@ -22,13 +48,27 @@ export default function MomentViewer({ visible, moment, stickers = [], onClose }
   const gestureRef   = useRef({});
   const floatImgRefs = useRef({}); // key → <img> DOM node
 
-  // ── Scale measurement — BEFORE paint so first frame is already correct ────────
+  // ── Scale measurement — BEFORE paint; fit both width and height in viewport ──
   useLayoutEffect(() => {
     if (!visible) return;
     if (!cardRef.current) return;
-    const w = cardRef.current.offsetWidth;
-    if (w > 0) setCardScale(Math.min(MAX_SCALE, (window.innerWidth - 40) / w));
-  }, [visible, moment]);
+    setCardScale(computeCardScale(cardRef.current));
+  }, [visible, moment, stickers]);
+
+  useEffect(() => {
+    if (!visible) return;
+    const onResize = () => {
+      if (cardRef.current) setCardScale(computeCardScale(cardRef.current));
+    };
+    window.addEventListener('resize', onResize);
+    window.visualViewport?.addEventListener('resize', onResize);
+    window.visualViewport?.addEventListener('scroll', onResize);
+    return () => {
+      window.removeEventListener('resize', onResize);
+      window.visualViewport?.removeEventListener('resize', onResize);
+      window.visualViewport?.removeEventListener('scroll', onResize);
+    };
+  }, [visible, moment, stickers]);
 
   // ── Open / close animation + state reset ─────────────────────────────────────
   useEffect(() => {
@@ -257,7 +297,7 @@ export default function MomentViewer({ visible, moment, stickers = [], onClose }
 
       {/* ── Scaled moment card ── */}
       <div style={{
-        position: 'absolute', top: '46%', left: '50%',
+        position: 'absolute', top: '50%', left: '50%',
         transform: `translate(-50%, -50%) scale(${show ? cardScale : 0.6})`,
         opacity: show ? 1 : 0,
         transition: show
