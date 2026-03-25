@@ -109,12 +109,15 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
   };
 
   return (
-    <div style={{
-      position: 'absolute',
-      inset: 0,
-      overflow: 'hidden',
-      background: 'transparent',
-    }}>
+    <div
+      className="viewport-fill-min"
+      style={{
+        position: 'absolute',
+        inset: 0,
+        overflow: 'hidden',
+        background: 'transparent',
+      }}
+    >
       <StatusBar />
 
       {/* Back — X=24 Y=72 per layout spec (extra horizontal inset on devices with curved corners). */}

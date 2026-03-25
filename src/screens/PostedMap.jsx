@@ -57,7 +57,7 @@ export default function PostedMap({ transcript, onRecord }) {
   }, []);
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+    <div className="viewport-fill-min" style={{ position: 'relative', width: '100%', height: '100%', minHeight: '100%', overflow: 'hidden' }}>
 
       {/* ── Layer 1: Map — single image, full-bleed, no grid ── */}
       <img

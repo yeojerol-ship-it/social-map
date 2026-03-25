@@ -30,6 +30,9 @@ html, body, #root {
 html {
   height: 100%;
   height: -webkit-fill-available;
+  /* Stop iOS rubber-band: fixed layers use 100% of layout viewport until overscroll “reveals” the rest */
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 body {
@@ -37,6 +40,10 @@ body {
   min-height: 100dvh;
   min-height: 100lvh;
   min-height: -webkit-fill-available;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  position: relative;
 }
 
 #root {
@@ -45,6 +52,9 @@ body {
   min-height: 100lvh;
   min-height: -webkit-fill-available;
   height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
   /* overflow:hidden only on desktop via media query below */
 }
 
@@ -57,6 +67,12 @@ body {
   min-height: -webkit-fill-available;
 }
 
+/* Main shell: stretch with inset + block overscroll from propagating */
+.app-viewport-shell {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: auto;
+}
+
 /* Desktop: iPhone 17 Pro simulator — flex centering + fixed frame */
 @media (min-width: 600px) {
   body {
@@ -65,17 +81,25 @@ body {
     justify-content: center;
     background: #111;
     min-height: 100dvh;
+    overflow: auto;
+    overscroll-behavior: auto;
   }
   #root {
     width: 393px;
     height: 852px;
     min-height: unset;
+    max-height: none;
     border-radius: 44px;
     overflow: hidden;
     flex-shrink: 0;
+    overscroll-behavior: auto;
     box-shadow:
       0 0 0 1px rgba(255,255,255,0.12),
       0 40px 80px rgba(0,0,0,0.7);
+  }
+  html {
+    overflow: auto;
+    overscroll-behavior: auto;
   }
 }
 

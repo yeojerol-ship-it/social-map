@@ -289,12 +289,13 @@ export default function MomentViewer({ visible, moment, stickers = [], onClose }
   return (
     <div
       ref={viewerRef}
+      className="app-viewport-shell"
       style={{
         position: 'fixed',
         inset: 0,
-        width: '100%',
-        height: '100%',
         zIndex: 50,
+        overflow: 'hidden',
+        overscrollBehavior: 'none',
         pointerEvents: visible ? 'auto' : 'none',
       }}
     >
@@ -317,7 +318,7 @@ export default function MomentViewer({ visible, moment, stickers = [], onClose }
         paddingLeft: 'max(20px, env(safe-area-inset-left, 0px))',
         paddingRight: 'max(20px, env(safe-area-inset-right, 0px))',
         paddingTop: 'max(88px, calc(env(safe-area-inset-top, 0px) + 72px))',
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        paddingBottom: 0,
         boxSizing: 'border-box',
         pointerEvents: 'none',
         zIndex: 2,

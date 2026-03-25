@@ -655,7 +655,15 @@ export default function MapFeed({ onRecord, recording, newMoment, onMomentTap })
     // Re-cluster on every pan/zoom end
     map.on('moveend', updateClusters);
 
+    const onResize = () => map.resize();
+    window.addEventListener('resize', onResize);
+    window.visualViewport?.addEventListener('resize', onResize);
+    window.visualViewport?.addEventListener('scroll', onResize);
+
     return () => {
+      window.removeEventListener('resize', onResize);
+      window.visualViewport?.removeEventListener('resize', onResize);
+      window.visualViewport?.removeEventListener('scroll', onResize);
       map.remove();
       mapRef.current = null;
     };
