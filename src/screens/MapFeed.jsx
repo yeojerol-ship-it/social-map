@@ -655,11 +655,11 @@ function Overlay({ onRecord, recording }) {
         {/* 110px spacer so the button sits at the same y as before (FEED_MIC was 104px + 6px gap) */}
         <div style={{ height: 110 }} />
         <button
-          onPointerDown={startLongPress}
-          onPointerUp={endLongPress}
-          onPointerCancel={endLongPress}
-          onPointerLeave={endLongPress}
-          onTouchStart={(e) => startLongPress(e)}
+          onPointerDown={(e) => { if (e.pointerType !== 'touch') startLongPress(e); }}
+          onPointerUp={(e) => { if (e.pointerType !== 'touch') endLongPress(e); }}
+          onPointerCancel={(e) => { if (e.pointerType !== 'touch') endLongPress(e); }}
+          onPointerLeave={(e) => { if (e.pointerType !== 'touch') endLongPress(e); }}
+          onTouchStart={startLongPress}
           onTouchEnd={endLongPress}
           onTouchCancel={endLongPress}
           style={{
