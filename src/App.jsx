@@ -338,13 +338,13 @@ export default function App() {
       background: '#f6f4ea',
       boxSizing: 'border-box',
     }}>
-        {/* Map — full viewport (edge-to-edge); bottom safe area handled inside MapFeed controls */}
+        {/* Map — fixed to the visual viewport so Mapbox isn’t clipped by % height / #root sizing */}
         <div style={{
-          position: 'absolute',
+          position: 'fixed',
           inset: 0,
           width: '100%',
           height: '100%',
-          minHeight: '100dvh',
+          zIndex: 0,
           opacity: screen === 'posted' ? 0 : 1,
           transition: 'opacity 0.3s ease',
           pointerEvents: screen === 'map' ? 'auto' : 'none',
@@ -356,7 +356,7 @@ export default function App() {
             Stays at opacity:1 across the recording→rec-done boundary
             so the blur never drops between states. */}
         <div style={{
-          position: 'absolute', inset: 0, zIndex: 15,
+          position: 'fixed', inset: 0, zIndex: 15,
           backdropFilter: 'blur(16.25px)',
           WebkitBackdropFilter: 'blur(16.25px)',
           background: 'rgba(246,244,234,0.6)',

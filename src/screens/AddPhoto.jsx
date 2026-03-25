@@ -145,7 +145,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
         </div>
       </button>
 
-      {/* Column: transcript row + 1:1 viewfinder (width = device − 8px), horizontally centered */}
+      {/* 1:1 viewfinder (device width − 8px), centered; transcript + avatar overlay inside */}
       <div style={{
         position: 'absolute',
         left: '50%',
@@ -158,95 +158,109 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
         alignItems: 'stretch',
         boxSizing: 'border-box',
       }}>
-        {/* Avatar + bubble — same width as viewport */}
-        <div style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'flex-end',
-          gap: 4,
-          marginBottom: 10,
-        }}>
-          <div style={{
-            width: 40,
-            height: 40,
-            borderRadius: 999,
-            overflow: 'hidden',
-            flexShrink: 0,
-            opacity: avatarIn ? 1 : 0,
-            transform: avatarIn ? 'translateY(0px) scale(1)' : 'translateY(14px) scale(0.7)',
-            transition: 'opacity 0.3s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1)',
-          }}>
-            <img
-              src={USER_AVATAR_REC} alt="me"
-              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' }}
-            />
-          </div>
-          <div style={{
-            width: 8,
-            height: 8,
-            borderRadius: '50%',
-            background: 'white',
-            flexShrink: 0,
-            marginBottom: 18,
-            opacity: bubbleIn ? 1 : 0,
-            transform: bubbleIn ? 'scale(1)' : 'scale(0)',
-            transition: 'opacity 0.25s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1)',
-          }} />
-          <div style={{
-            flex: 1,
-            minWidth: 0,
-            backdropFilter: 'blur(4.35px)',
-            WebkitBackdropFilter: 'blur(4.35px)',
-            background: 'white',
-            border: '1px solid rgba(255,255,255,0.4)',
-            padding: '8px 16px',
-            borderRadius: 24,
-            boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-            opacity: bubbleIn ? 1 : 0,
-            transform: bubbleIn ? 'translateX(0px) scale(1)' : 'translateX(-10px) scale(0.88)',
-            transition: 'opacity 0.3s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1)',
-          }}>
-            <p style={{ margin: 0, fontSize: 20, fontWeight: 600, lineHeight: 1.3, color: 'rgba(0,0,0,0.65)' }}>
-              {transcript}
-            </p>
-          </div>
-        </div>
-
-        {/* Square viewfinder: 1:1, device width − 8px */}
         <div style={{
           width: '100%',
           aspectRatio: '1',
-          borderRadius: 40,
-          overflow: 'hidden',
-          background: '#000',
           position: 'relative',
         }}>
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            style={{
-              position: 'absolute', inset: 0,
-              width: '100%', height: '100%',
-              objectFit: 'cover',
-              transform: facingMode === 'user' ? 'scaleX(-1)' : 'none',
-              filter: 'brightness(1.04) contrast(0.92) saturate(1.10)',
-              opacity: snapped ? 0 : 1,
-              transition: 'opacity 0.15s ease',
-            }}
-          />
-          {frozenFrame && (
-            <img
-              src={frozenFrame}
-              alt=""
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            borderRadius: 40,
+            overflow: 'hidden',
+            background: '#000',
+          }}>
+            <video
+              ref={videoRef}
+              autoPlay
+              playsInline
+              muted
               style={{
                 position: 'absolute', inset: 0,
                 width: '100%', height: '100%',
                 objectFit: 'cover',
+                transform: facingMode === 'user' ? 'scaleX(-1)' : 'none',
+                filter: 'brightness(1.04) contrast(0.92) saturate(1.10)',
+                opacity: snapped ? 0 : 1,
+                transition: 'opacity 0.15s ease',
               }}
             />
-          )}
+            {frozenFrame && (
+              <img
+                src={frozenFrame}
+                alt=""
+                style={{
+                  position: 'absolute', inset: 0,
+                  width: '100%', height: '100%',
+                  objectFit: 'cover',
+                }}
+              />
+            )}
+          </div>
+
+          {/* Avatar 20px inset from viewfinder; bubble at top-right of avatar; dot on connector (mc2-style). */}
+          <div
+            style={{
+              position: 'absolute',
+              left: 20,
+              top: 20,
+              width: 40,
+              height: 40,
+              borderRadius: 999,
+              overflow: 'hidden',
+              zIndex: 2,
+              opacity: avatarIn ? 1 : 0,
+              transform: avatarIn ? 'translateY(0px) scale(1)' : 'translateY(14px) scale(0.7)',
+              transition: 'opacity 0.3s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1)',
+              pointerEvents: 'none',
+            }}
+          >
+            <img
+              src={USER_AVATAR_REC} alt="me"
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+            />
+          </div>
+          <div
+            style={{
+              position: 'absolute',
+              left: 50,
+              top: 22,
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+              background: 'white',
+              zIndex: 3,
+              opacity: bubbleIn ? 1 : 0,
+              transform: bubbleIn ? 'scale(1)' : 'scale(0)',
+              transition: 'opacity 0.25s ease, transform 0.4s cubic-bezier(0.34,1.56,0.64,1)',
+              pointerEvents: 'none',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              left: 56,
+              top: 6,
+              maxWidth: 'min(220px, calc(100% - 72px))',
+              width: 'fit-content',
+              backdropFilter: 'blur(4.35px)',
+              WebkitBackdropFilter: 'blur(4.35px)',
+              background: 'white',
+              border: '1px solid rgba(255,255,255,0.4)',
+              padding: '8px 16px',
+              borderRadius: 24,
+              boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
+              zIndex: 3,
+              opacity: bubbleIn ? 1 : 0,
+              transform: bubbleIn ? 'translateX(0px) scale(1)' : 'translateX(-10px) scale(0.88)',
+              transition: 'opacity 0.3s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1)',
+              pointerEvents: 'none',
+            }}
+          >
+            <p style={{ margin: 0, fontSize: 20, fontWeight: 600, lineHeight: 1.3, color: 'rgba(0,0,0,0.65)' }}>
+              {transcript}
+            </p>
+          </div>
         </div>
 
         <p style={{
@@ -266,7 +280,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
         </p>
       </div>
 
-      {/* Bottom controls — inset for home indicator */}
+      {/* Bottom controls — 40px spacing between flip / shutter / gallery */}
       <div style={{
         position: 'absolute',
         left: '50%',
@@ -274,10 +288,11 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
         bottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
         width: VIEWPORT_WIDTH,
         maxWidth: 'calc(100% - 8px)',
-        display: 'grid',
-        gridTemplateColumns: '67px 1fr 67px',
+        display: 'flex',
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyItems: 'center',
+        justifyContent: 'center',
+        gap: 40,
         boxSizing: 'border-box',
         zIndex: 5,
       }}>
@@ -299,13 +314,13 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
             opacity: snapped ? 0 : 1,
             transition: 'opacity 0.2s ease',
             pointerEvents: snapped ? 'none' : 'auto',
-            justifySelf: 'start',
+            flexShrink: 0,
           }}
         >
           <img src={CAMERA_FLIP_PNG} alt="flip" style={{ width: 32, height: 32, display: 'block' }} />
         </div>
 
-        <div style={{ position: 'relative', width: 100, height: 100 }}>
+        <div style={{ position: 'relative', width: 100, height: 100, flexShrink: 0 }}>
           <div
             onClick={handleSnap}
             role="button"
@@ -363,7 +378,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
           opacity: snapped ? 0 : 1,
           transition: 'opacity 0.2s ease',
           pointerEvents: snapped ? 'none' : 'auto',
-          justifySelf: 'end',
+          flexShrink: 0,
         }}
         >
           <div style={{ position: 'relative', width: 32, height: 32, overflow: 'hidden' }}>
