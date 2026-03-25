@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react';
 import MapFeed from './screens/MapFeed';
 import RecordingDone from './screens/RecordingDone';
 import AddPhoto from './screens/AddPhoto';
@@ -38,7 +38,9 @@ function MicHero({ mode }) {
   return (
     <div style={{
       position: 'absolute',
-      left: 0, bottom: 'calc(201px + 8px)', width: '100%', height: 475,
+      left: 0,
+      bottom: 'calc(201px + 8px + env(safe-area-inset-bottom, 0px))',
+      width: '100%', height: 475,
       zIndex: 34, pointerEvents: 'none',
       transformOrigin: 'center bottom',
       ...MIC_STYLES[mode],
@@ -83,7 +85,7 @@ function RecordingOverlay({ liveText }) {
 
       {/* Pulsating white bubble */}
       <div style={{
-        position: 'absolute', left: '50%', top: 'calc(100% - 201px)',
+        position: 'absolute', left: '50%', top: 'calc(100% - 201px - env(safe-area-inset-bottom, 0px))',
         transform: 'translateX(-50%)',
         width: 800, height: 800,
         pointerEvents: 'none',
@@ -123,6 +125,76 @@ function Overlay({ children, visible }) {
       pointerEvents: visible ? 'auto' : 'none',
     }}>
       {children}
+    </div>
+  );
+}
+
+const DESIGN_W = 390;
+const DESIGN_H = 844;
+
+/** Scales the fixed Figma-sized screen to fit the visible area inside safe zones (prevents bottom controls being clipped). */
+function DesignScreenShell({ children }) {
+  const hostRef = useRef(null);
+  const [scale, setScale] = useState(1);
+
+  useLayoutEffect(() => {
+    const el = hostRef.current;
+    if (!el) return;
+
+    const update = () => {
+      const cs = getComputedStyle(el);
+      const padY =
+        (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+      const padX =
+        (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+      const w = el.clientWidth - padX;
+      const h = el.clientHeight - padY;
+      const s = Math.min(1, (w > 0 ? w / DESIGN_W : 1), (h > 0 ? h / DESIGN_H : 1));
+      setScale(s || 1);
+    };
+
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    update();
+    return () => ro.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={hostRef}
+      style={{
+        position: 'absolute',
+        inset: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingTop: 'env(safe-area-inset-top, 0px)',
+        paddingRight: 'env(safe-area-inset-right, 0px)',
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        paddingLeft: 'env(safe-area-inset-left, 0px)',
+        boxSizing: 'border-box',
+      }}
+    >
+      <div
+        style={{
+          width: DESIGN_W * scale,
+          height: DESIGN_H * scale,
+          borderRadius: 44 * scale,
+          overflow: 'hidden',
+          flexShrink: 0,
+        }}
+      >
+        <div
+          style={{
+            width: DESIGN_W,
+            height: DESIGN_H,
+            transform: `scale(${scale})`,
+            transformOrigin: 'top left',
+          }}
+        >
+          {children}
+        </div>
+      </div>
     </div>
   );
 }
@@ -295,17 +367,21 @@ export default function App() {
 
         {/* RecordingDone — transparent, sits on FrostLayer */}
         <Overlay visible={screen === 'rec-done'}>
-          <RecordingDone
-            visible={screen === 'rec-done'}
-            transcript={transcript}
-            onAddPhoto={() => go('add-photo')}
-            onPost={() => go('posted')}
-            onClose={() => go('map')}
-          />
+          <DesignScreenShell>
+            <RecordingDone
+              visible={screen === 'rec-done'}
+              transcript={transcript}
+              onAddPhoto={() => go('add-photo')}
+              onPost={() => go('posted')}
+              onClose={() => go('map')}
+            />
+          </DesignScreenShell>
         </Overlay>
 
         <Overlay visible={screen === 'add-photo'}>
-          <AddPhoto visible={screen === 'add-photo'} transcript={transcript} onBack={() => go('map')} onPost={handlePost} />
+          <DesignScreenShell>
+            <AddPhoto visible={screen === 'add-photo'} transcript={transcript} onBack={() => go('map')} onPost={handlePost} />
+          </DesignScreenShell>
         </Overlay>
 
         {/* Moment viewer — tap any card on the map to open */}

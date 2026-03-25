@@ -26,8 +26,8 @@ export default function RecordingDone({ visible, transcript, onAddPhoto, onPost,
   }, [visible]);
 
   return (
-    // Transparent — FrostLayer in App provides the blur + cream tint
-    <div style={{ position: 'relative', width: 390, height: 844, borderRadius: 44, overflow: 'hidden' }}>
+    // Transparent — FrostLayer in App provides the blur + cream tint. Size comes from DesignScreenShell.
+    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
       <StatusBar />
 
       {/* Close button — 48×48, X icon 24×24 (with 22.87% inset matching Figma) */}
