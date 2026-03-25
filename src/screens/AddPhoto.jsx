@@ -4,7 +4,7 @@ import { USER_AVATAR_REC } from '../assets';
 import CAMERA_FLIP_PNG from '../assets/Icon/Camera_Flip_Camera.png';
 import ARROW_UP_PNG from '../assets/Icon/Arrow_Up_Bold.png';
 import { analyzeMoment } from '../services/openai';
-import { STICKER_PACK } from '../stickers';
+import { STICKER_PACK, getFallbackLayout } from '../stickers';
 
 // Figma MCP assets — node 230:8307
 const IMG_ARROW_LEFT  = 'https://www.figma.com/api/mcp/asset/32fc7fff-3f5b-4141-bd23-0ed6eb0c09c1';
@@ -15,7 +15,7 @@ const VIEWPORT_WIDTH = 'calc(100vw - 8px)';
 export default function AddPhoto({ visible, transcript, onBack, onPost }) {
   const [avatarIn, setAvatarIn]       = useState(false);
   const [bubbleIn, setBubbleIn]       = useState(false);
-  const [facingMode, setFacingMode]   = useState('environment');
+  const [facingMode, setFacingMode]   = useState('user');
   const [frozenFrame, setFrozenFrame] = useState(null); // dataURL of captured frame
   const [snapStickers, setSnapStickers] = useState([]); // [{ src, corner }]
   const videoRef  = useRef(null);
@@ -23,6 +23,16 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
   const snapReqIdRef = useRef(0);
 
   const snapped = frozenFrame !== null;
+
+  const setSnapStickersFromIds = (ids) => {
+    const valid = (ids ?? []).filter((id) => STICKER_PACK[id]).slice(0, 2);
+    if (valid.length < 2) return false;
+    setSnapStickers([
+      { src: STICKER_PACK[valid[0]], corner: 'top-right' },
+      { src: STICKER_PACK[valid[1]], corner: 'bottom-left' },
+    ]);
+    return true;
+  };
 
   // Entrance animation — reset state on BOTH enter and exit so a leftover
   // frozenFrame from a previous session can never bleed into the next one.
@@ -32,13 +42,13 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
       setBubbleIn(false);
       setFrozenFrame(null);
       setSnapStickers([]);
-      setFacingMode('environment');
+      setFacingMode('user');
       return;
     }
     // Always start fresh when the screen opens
     setFrozenFrame(null);
     setSnapStickers([]);
-    setFacingMode('environment');
+    setFacingMode('user');
     setAvatarIn(false);
     setBubbleIn(false);
     const t1 = setTimeout(() => setAvatarIn(true), 80);
@@ -115,17 +125,21 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
 
     const snapDataUrl = canvas.toDataURL('image/jpeg', 0.92);
     setFrozenFrame(snapDataUrl);
-    setSnapStickers([]);
+    // Show deterministic fallback immediately so snapped UI always has stickers.
+    const fallbackIds = getFallbackLayout(transcript, 1)
+      .map((s) => Object.keys(STICKER_PACK).find((id) => STICKER_PACK[id] === s.src))
+      .filter(Boolean);
+    if (!setSnapStickersFromIds(fallbackIds)) {
+      setSnapStickers([
+        { src: STICKER_PACK.sparkle, corner: 'top-right' },
+        { src: STICKER_PACK.star, corner: 'bottom-left' },
+      ]);
+    }
     const reqId = ++snapReqIdRef.current;
     analyzeMoment(transcript, snapDataUrl)
       .then((data) => {
         if (snapReqIdRef.current !== reqId) return;
-        const ids = (data?.stickers ?? []).filter((id) => STICKER_PACK[id]).slice(0, 2);
-        if (ids.length < 2) return;
-        setSnapStickers([
-          { src: STICKER_PACK[ids[0]], corner: 'top-right' },
-          { src: STICKER_PACK[ids[1]], corner: 'bottom-left' },
-        ]);
+        setSnapStickersFromIds(data?.stickers ?? []);
       })
       .catch(() => {});
     if (streamRef.current) {
@@ -225,25 +239,27 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
                 }}
               />
             )}
-            {snapped && snapStickers.map((s, i) => (
-              <img
-                key={`${s.corner}-${i}`}
-                src={s.src}
-                alt=""
-                style={{
-                  position: 'absolute',
-                  width: 100,
-                  height: 100,
-                  objectFit: 'contain',
-                  zIndex: 3,
-                  pointerEvents: 'none',
-                  ...(s.corner === 'top-right'
-                    ? { right: -14, top: -14, transform: 'rotate(10deg)' }
-                    : { left: -14, bottom: -14, transform: 'rotate(-8deg)' }),
-                }}
-              />
-            ))}
           </div>
+
+          {/* Snapped stickers float above camera mask so they're never clipped. */}
+          {snapped && snapStickers.map((s, i) => (
+            <img
+              key={`${s.corner}-${i}`}
+              src={s.src}
+              alt=""
+              style={{
+                position: 'absolute',
+                width: 100,
+                height: 100,
+                objectFit: 'contain',
+                zIndex: 4,
+                pointerEvents: 'none',
+                ...(s.corner === 'top-right'
+                  ? { right: -14, top: -14, transform: 'rotate(10deg)' }
+                  : { left: -14, bottom: -14, transform: 'rotate(-8deg)' }),
+              }}
+            />
+          ))}
 
           {/* Avatar cluster: 20px inset from viewfinder; bubble + dot in avatar coords (30, -40), overflow visible. */}
           <div
@@ -283,7 +299,8 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
               <div
                 style={{
                   position: 'absolute',
-                  left: 30,
+                  // Anchor bubble cluster to avatar top-right.
+                  left: 40,
                   top: -40,
                   display: 'inline-block',
                   boxSizing: 'border-box',
@@ -380,7 +397,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
             width: 67,
             height: 64,
             borderRadius: 20,
-            background: 'rgba(0,0,0,0.05)',
+            background: '#FBFBFB',
             border: '1px solid rgba(0,0,0,0.01)',
             display: 'flex',
             alignItems: 'center',
@@ -445,7 +462,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
           width: 67,
           height: 64,
           borderRadius: 20,
-          background: 'rgba(0,0,0,0.05)',
+          background: '#FBFBFB',
           border: '1px solid rgba(0,0,0,0.01)',
           display: 'flex',
           alignItems: 'center',

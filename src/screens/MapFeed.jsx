@@ -183,6 +183,11 @@ function settleReactionSticker(mc2, { src, x, y, size, rot }) {
 }
 
 function spawnReactionBurst(mc2) {
+  const now = performance.now();
+  const lastTapAt = mc2._lastReactionTapAt || 0;
+  const isDoubleTap = now - lastTapAt < 280;
+  mc2._lastReactionTapAt = now;
+
   const momentStickerSources = Array.from(
     mc2.querySelectorAll('.mc2-sticker--ai .mc2-sticker-img')
   )
@@ -197,7 +202,7 @@ function spawnReactionBurst(mc2) {
   const cx = w / 2;
   const cy = h / 2;
   mc2._reactionClicks = (mc2._reactionClicks || 0) + 1;
-  const count = 2 + Math.min(mc2._reactionClicks, 10);
+  const count = isDoubleTap ? 2 : 2 + Math.min(mc2._reactionClicks, 10);
   const rMax = Math.min(w, h) * 0.42;
   const screenStartX = window.innerWidth / 2;
   const screenStartY = window.innerHeight + 30;
