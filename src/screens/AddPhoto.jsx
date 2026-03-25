@@ -254,8 +254,10 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
                   position: 'absolute',
                   left: 30,
                   top: -40,
-                  width: 'fit-content',
-                  maxWidth: 'min(220px, calc(100vw - 100px))',
+                  display: 'inline-block',
+                  boxSizing: 'border-box',
+                  width: 'max-content',
+                  maxWidth: 220,
                   backdropFilter: 'blur(4.35px)',
                   WebkitBackdropFilter: 'blur(4.35px)',
                   background: 'white',
@@ -267,9 +269,20 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
                   opacity: bubbleIn ? 1 : 0,
                   transform: bubbleIn ? 'translateX(0px) scale(1)' : 'translateX(-10px) scale(0.88)',
                   transition: 'opacity 0.3s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1)',
+                  verticalAlign: 'top',
                 }}
               >
-                <p style={{ margin: 0, fontSize: 20, fontWeight: 600, lineHeight: 1.3, color: 'rgba(0,0,0,0.65)' }}>
+                <p style={{
+                  margin: 0,
+                  fontSize: 20,
+                  fontWeight: 600,
+                  lineHeight: 1.3,
+                  color: 'rgba(0,0,0,0.65)',
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                  overflowWrap: 'break-word',
+                }}
+                >
                   {transcript}
                 </p>
               </div>
