@@ -3,6 +3,8 @@ import StatusBar from '../components/StatusBar';
 import { USER_AVATAR_REC } from '../assets';
 import CAMERA_FLIP_PNG from '../assets/Icon/Camera_Flip_Camera.png';
 import ARROW_UP_PNG from '../assets/Icon/Arrow_Up_Bold.png';
+import { analyzeMoment } from '../services/openai';
+import { STICKER_PACK } from '../stickers';
 
 // Figma MCP assets — node 230:8307
 const IMG_ARROW_LEFT  = 'https://www.figma.com/api/mcp/asset/32fc7fff-3f5b-4141-bd23-0ed6eb0c09c1';
@@ -15,20 +17,30 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
   const [bubbleIn, setBubbleIn]       = useState(false);
   const [facingMode, setFacingMode]   = useState('environment');
   const [frozenFrame, setFrozenFrame] = useState(null); // dataURL of captured frame
+  const [snapStickers, setSnapStickers] = useState([]); // [{ src, corner }]
   const videoRef  = useRef(null);
   const streamRef = useRef(null);
+  const snapReqIdRef = useRef(0);
 
   const snapped = frozenFrame !== null;
 
-  // Entrance animation
+  // Entrance animation — reset state on BOTH enter and exit so a leftover
+  // frozenFrame from a previous session can never bleed into the next one.
   useEffect(() => {
     if (!visible) {
       setAvatarIn(false);
       setBubbleIn(false);
       setFrozenFrame(null);
+      setSnapStickers([]);
       setFacingMode('environment');
       return;
     }
+    // Always start fresh when the screen opens
+    setFrozenFrame(null);
+    setSnapStickers([]);
+    setFacingMode('environment');
+    setAvatarIn(false);
+    setBubbleIn(false);
     const t1 = setTimeout(() => setAvatarIn(true), 80);
     const t2 = setTimeout(() => setBubbleIn(true), 260);
     return () => { clearTimeout(t1); clearTimeout(t2); };
@@ -101,7 +113,21 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
       ctx.globalAlpha = 1.0;
     }
 
-    setFrozenFrame(canvas.toDataURL('image/jpeg', 0.92));
+    const snapDataUrl = canvas.toDataURL('image/jpeg', 0.92);
+    setFrozenFrame(snapDataUrl);
+    setSnapStickers([]);
+    const reqId = ++snapReqIdRef.current;
+    analyzeMoment(transcript, snapDataUrl)
+      .then((data) => {
+        if (snapReqIdRef.current !== reqId) return;
+        const ids = (data?.stickers ?? []).filter((id) => STICKER_PACK[id]).slice(0, 2);
+        if (ids.length < 2) return;
+        setSnapStickers([
+          { src: STICKER_PACK[ids[0]], corner: 'top-right' },
+          { src: STICKER_PACK[ids[1]], corner: 'bottom-left' },
+        ]);
+      })
+      .catch(() => {});
     if (streamRef.current) {
       streamRef.current.getTracks().forEach(t => t.stop());
       streamRef.current = null;
@@ -199,6 +225,24 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
                 }}
               />
             )}
+            {snapped && snapStickers.map((s, i) => (
+              <img
+                key={`${s.corner}-${i}`}
+                src={s.src}
+                alt=""
+                style={{
+                  position: 'absolute',
+                  width: 100,
+                  height: 100,
+                  objectFit: 'contain',
+                  zIndex: 3,
+                  pointerEvents: 'none',
+                  ...(s.corner === 'top-right'
+                    ? { right: -14, top: -14, transform: 'rotate(10deg)' }
+                    : { left: -14, bottom: -14, transform: 'rotate(-8deg)' }),
+                }}
+              />
+            ))}
           </div>
 
           {/* Avatar cluster: 20px inset from viewfinder; bubble + dot in avatar coords (30, -40), overflow visible. */}

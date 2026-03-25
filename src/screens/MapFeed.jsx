@@ -32,7 +32,7 @@ import {
   NP1, NP2, NP3, NP4, NP5, NP6, NP7, NP8,
 } from '../assets';
 import { analyzeMoment }              from '../services/openai';
-import { getStickerLayout, getFallbackLayout, STICKER_PACK } from '../stickers';
+import { getStickerLayout, getFallbackLayout } from '../stickers';
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const TOKEN          = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -141,11 +141,6 @@ function injectStickers(el, layout) {
 }
 
 // ─── Tap-to-like: sporadic stickers around the card (accumulates with repeat taps) ───
-const REACTION_SOURCES = [
-  STICKER_PACK.heart, STICKER_PACK.star, STICKER_PACK.sparkle,
-  STICKER_PACK.confetti, STICKER_PACK.paw, STICKER_PACK.flower,
-];
-
 const REACTION_HOLD_MS   = 2000;
 const REACTION_FADE_MS   = 450;
 
@@ -188,6 +183,15 @@ function settleReactionSticker(mc2, { src, x, y, size, rot }) {
 }
 
 function spawnReactionBurst(mc2) {
+  const momentStickerSources = Array.from(
+    mc2.querySelectorAll('.mc2-sticker--ai .mc2-sticker-img')
+  )
+    .map((img) => img.getAttribute('src'))
+    .filter(Boolean);
+
+  // Use only the stickers currently shown on this moment.
+  if (momentStickerSources.length === 0) return;
+
   const w = mc2.offsetWidth || 200;
   const h = mc2.offsetHeight || 169;
   const cx = w / 2;
@@ -207,7 +211,7 @@ function spawnReactionBurst(mc2) {
     const y = cy + Math.sin(ang) * r - 15;
     const rot = (Math.random() - 0.5) * 56;
     const size = Math.round(22 + Math.random() * 14);
-    const src = REACTION_SOURCES[(Math.random() * REACTION_SOURCES.length) | 0];
+    const src = momentStickerSources[(Math.random() * momentStickerSources.length) | 0];
     const delay = i * 140 + ((Math.random() * 40) | 0); // one-by-one
 
     const targetX = mc2Rect.left + x + size / 2;
@@ -240,7 +244,8 @@ function spawnReactionBurst(mc2) {
         const u = 1 - t;
         const px = u * u * screenStartX + 2 * u * t * apexX + t * t * targetX;
         const py = u * u * screenStartY + 2 * u * t * apexY + t * t * targetY;
-        const sc = 0.72 + 0.4 * t;
+        // Start larger at launch, then shrink down as it reaches the moment.
+        const sc = 1.42 - 0.42 * t;
         const rNow = rot * t;
         fly.style.opacity = t < 0.05 ? `${t / 0.05}` : '1';
         fly.style.transform = `translate(${px - size / 2}px, ${py - size / 2}px) rotate(${rNow}deg) scale(${sc})`;
@@ -272,7 +277,9 @@ function suppressMapPanForPhotoGesture(map) {
 }
 
 // ─── Photo peel: drag like MomentViewer; release snaps back into the card ───
-const PHOTO_DRAG_THRESHOLD = 10;
+// Require a more intentional movement before peeling a photo out.
+// This keeps simple taps on an image as "like/projectile" interactions.
+const PHOTO_DRAG_THRESHOLD = 18;
 
 function setupMapPhotoDrag(mc2, map) {
   const slots = [
