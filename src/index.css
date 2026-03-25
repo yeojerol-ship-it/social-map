@@ -86,19 +86,27 @@ body {
 
 /* ── Camera loading placeholder ─────────────────────────────────── */
 @keyframes cameraSweep {
-  0%   { background-position: 0% 0%;   filter: saturate(1.15) brightness(1.05); }
-  50%  { background-position: 100% 100%; filter: saturate(1.25) brightness(1.10); }
-  100% { background-position: 0% 0%;   filter: saturate(1.15) brightness(1.05); }
+  0%   { background-position: 0% 0%;   filter: saturate(1.35) brightness(1.08) hue-rotate(0deg); }
+  50%  { background-position: 100% 100%; filter: saturate(1.55) brightness(1.12) hue-rotate(18deg); }
+  100% { background-position: 0% 0%;   filter: saturate(1.35) brightness(1.08) hue-rotate(0deg); }
 }
 .camera-loading-sweep {
+  /* Magical, low-opacity sweep (kept subtle at 20%). */
+  opacity: 0.2;
   background:
+    radial-gradient(1100px 900px at 10% 10%,
+      rgba(255, 235, 170, 0.95) 0%,
+      rgba(255, 235, 170, 0) 55%),
+    radial-gradient(900px 900px at 80% 25%,
+      rgba(185, 125, 255, 0.95) 0%,
+      rgba(185, 125, 255, 0) 52%),
     linear-gradient(135deg,
-      rgba(255, 89, 192, 0.85) 0%,
-      rgba(255, 201, 71, 0.85) 28%,
-      rgba(85, 224, 255, 0.85) 58%,
-      rgba(151, 99, 255, 0.85) 100%);
-  background-size: 220% 220%;
-  animation: cameraSweep 1.1s ease-in-out infinite;
+      rgba(90, 235, 255, 0.95) 0%,
+      rgba(255, 122, 220, 0.95) 35%,
+      rgba(255, 216, 120, 0.95) 62%,
+      rgba(160, 120, 255, 0.95) 100%);
+  background-size: 240% 240%;
+  animation: cameraSweep 1.15s ease-in-out infinite;
 }
 
 /* Desktop: iPhone 17 Pro simulator — flex centering + fixed frame */

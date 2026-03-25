@@ -20,9 +20,12 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
   const [snapStickers, setSnapStickers] = useState([]); // [{ src, corner }]
   const [isPosting, setIsPosting] = useState(false);
   const [camReady, setCamReady] = useState(false);
+  const [showSweep, setShowSweep] = useState(false);
   const videoRef  = useRef(null);
   const streamRef = useRef(null);
   const snapReqIdRef = useRef(0);
+  const sweepStartRef = useRef(0);
+  const sweepTimerRef = useRef(null);
 
   const snapped = frozenFrame !== null;
 
@@ -70,6 +73,12 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
       return;
     }
     setCamReady(false);
+    setShowSweep(true);
+    sweepStartRef.current = performance.now();
+    if (sweepTimerRef.current) {
+      window.clearTimeout(sweepTimerRef.current);
+      sweepTimerRef.current = null;
+    }
     let cancelled = false;
     navigator.mediaDevices?.getUserMedia({ video: { facingMode }, audio: false })
       .then(stream => {
@@ -84,12 +93,29 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
       .catch(() => {});
     return () => {
       cancelled = true;
+      if (sweepTimerRef.current) {
+        window.clearTimeout(sweepTimerRef.current);
+        sweepTimerRef.current = null;
+      }
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(t => t.stop());
         streamRef.current = null;
       }
     };
   }, [visible, facingMode]);
+
+  // Ensure the sweep shows for at least 1s (even if camera is ready fast).
+  useEffect(() => {
+    if (!visible) return;
+    if (!camReady) return;
+    const elapsed = performance.now() - (sweepStartRef.current || 0);
+    const remain = Math.max(0, 1000 - elapsed);
+    if (sweepTimerRef.current) window.clearTimeout(sweepTimerRef.current);
+    sweepTimerRef.current = window.setTimeout(() => {
+      setShowSweep(false);
+      sweepTimerRef.current = null;
+    }, remain);
+  }, [camReady, visible]);
 
   const flipCamera = () => {
     if (snapped) return;
@@ -219,7 +245,7 @@ export default function AddPhoto({ visible, transcript, onBack, onPost }) {
             background: '#000',
           }}>
             {/* Colorful gradient sweep while camera warms up */}
-            {!snapped && !camReady && (
+            {!snapped && showSweep && (
               <div
                 className="camera-loading-sweep"
                 style={{
