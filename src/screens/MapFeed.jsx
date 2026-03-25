@@ -146,9 +146,46 @@ const REACTION_SOURCES = [
   STICKER_PACK.confetti, STICKER_PACK.paw, STICKER_PACK.flower,
 ];
 
-const REACTION_SPRING_MS = 520;
 const REACTION_HOLD_MS   = 2000;
 const REACTION_FADE_MS   = 450;
+
+function settleReactionSticker(mc2, { src, x, y, size, rot }) {
+  const div = document.createElement('div');
+  div.className = 'mc2-sticker mc2-sticker--reaction';
+  div.style.cssText = [
+    `left:${x}px`,
+    `top:${y}px`,
+    `transform:rotate(${rot}deg) scale(0.78)`,
+    'z-index:5',
+    'opacity:0',
+    'transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1), opacity 0.16s ease-out',
+    'will-change:transform,opacity',
+  ].join(';');
+
+  const img = document.createElement('img');
+  img.src = src;
+  img.alt = '';
+  img.className = 'mc2-sticker-img';
+  img.style.width = `${size}px`;
+  img.style.height = `${size}px`;
+  img.draggable = false;
+  div.appendChild(img);
+  mc2.appendChild(div);
+
+  requestAnimationFrame(() => {
+    div.style.opacity = '1';
+    div.style.transform = `rotate(${rot}deg) scale(1)`;
+  });
+
+  window.setTimeout(() => {
+    div.style.willChange = 'opacity';
+    div.style.transition = `opacity ${REACTION_FADE_MS}ms ease-out`;
+    requestAnimationFrame(() => { div.style.opacity = '0'; });
+    const remove = () => { div.remove(); };
+    div.addEventListener('transitionend', remove, { once: true });
+    window.setTimeout(remove, REACTION_FADE_MS + 80);
+  }, REACTION_HOLD_MS);
+}
 
 function spawnReactionBurst(mc2) {
   const w = mc2.offsetWidth || 200;
@@ -158,7 +195,10 @@ function spawnReactionBurst(mc2) {
   mc2._reactionClicks = (mc2._reactionClicks || 0) + 1;
   const count = 2 + Math.min(mc2._reactionClicks, 10);
   const rMax = Math.min(w, h) * 0.42;
-  const springEasing = 'cubic-bezier(0.28, 1.15, 0.32, 1.22)';
+  const screenStartX = window.innerWidth / 2;
+  const screenStartY = window.innerHeight + 30;
+  const mc2Rect = mc2.getBoundingClientRect();
+  const flyMs = 560;
 
   for (let i = 0; i < count; i++) {
     const ang = Math.random() * Math.PI * 2;
@@ -168,51 +208,51 @@ function spawnReactionBurst(mc2) {
     const rot = (Math.random() - 0.5) * 56;
     const size = Math.round(22 + Math.random() * 14);
     const src = REACTION_SOURCES[(Math.random() * REACTION_SOURCES.length) | 0];
-    const popDy = 10 + Math.random() * 14;
-    const delay = i * 42 + ((Math.random() * 55) | 0);
+    const delay = i * 140 + ((Math.random() * 40) | 0); // one-by-one
 
-    const div = document.createElement('div');
-    div.className = 'mc2-sticker mc2-sticker--reaction';
-    div.style.cssText = [
-      `left:${x}px`,
-      `top:${y + popDy}px`,
-      `transform:rotate(${rot}deg) scale(0.08)`,
-      'z-index:5',
-      'opacity:0',
-      'transition:none',
-      'will-change:transform,opacity',
-    ].join(';');
-
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = '';
-    img.className = 'mc2-sticker-img';
-    img.style.width = `${size}px`;
-    img.style.height = `${size}px`;
-    img.draggable = false;
-    div.appendChild(img);
-    mc2.appendChild(div);
+    const targetX = mc2Rect.left + x + size / 2;
+    const targetY = mc2Rect.top + y + size / 2;
+    const apexX = (screenStartX + targetX) / 2 + (Math.random() - 0.5) * 70;
+    const apexY = Math.min(screenStartY, targetY) - (170 + Math.random() * 120);
 
     window.setTimeout(() => {
-      div.style.transition =
-        `top ${REACTION_SPRING_MS}ms ${springEasing},` +
-        `transform ${REACTION_SPRING_MS}ms ${springEasing},` +
-        'opacity 0.32s ease-out';
-      requestAnimationFrame(() => {
-        div.style.top = `${y}px`;
-        div.style.opacity = '1';
-        div.style.transform = `rotate(${rot}deg) scale(1)`;
-      });
+      const fly = document.createElement('img');
+      fly.src = src;
+      fly.alt = '';
+      fly.draggable = false;
+      fly.className = 'mc2-sticker-img';
+      fly.style.cssText = [
+        'position:fixed',
+        'left:0',
+        'top:0',
+        `width:${size}px`,
+        `height:${size}px`,
+        'z-index:10020',
+        'pointer-events:none',
+        'opacity:0',
+        'will-change:transform,opacity',
+      ].join(';');
+      document.body.appendChild(fly);
+
+      const start = performance.now();
+      const step = (now) => {
+        const t = Math.min(1, (now - start) / flyMs);
+        const u = 1 - t;
+        const px = u * u * screenStartX + 2 * u * t * apexX + t * t * targetX;
+        const py = u * u * screenStartY + 2 * u * t * apexY + t * t * targetY;
+        const sc = 0.72 + 0.4 * t;
+        const rNow = rot * t;
+        fly.style.opacity = t < 0.05 ? `${t / 0.05}` : '1';
+        fly.style.transform = `translate(${px - size / 2}px, ${py - size / 2}px) rotate(${rNow}deg) scale(${sc})`;
+        if (t < 1) {
+          requestAnimationFrame(step);
+        } else {
+          fly.remove();
+          settleReactionSticker(mc2, { src, x, y, size, rot });
+        }
+      };
+      requestAnimationFrame(step);
     }, delay);
-
-    window.setTimeout(() => {
-      div.style.willChange = 'opacity';
-      div.style.transition = `opacity ${REACTION_FADE_MS}ms ease-out`;
-      requestAnimationFrame(() => { div.style.opacity = '0'; });
-      const remove = () => { div.remove(); };
-      div.addEventListener('transitionend', remove, { once: true });
-      window.setTimeout(remove, REACTION_FADE_MS + 80);
-    }, delay + REACTION_HOLD_MS);
   }
 }
 
@@ -259,6 +299,7 @@ function setupMapPhotoDrag(mc2, map) {
       let floatEl = null;
       let rw = 0;
       let rh = 0;
+      let ended = false;
 
       const onMove = (ev) => {
         if (!floatEl) {
@@ -287,7 +328,6 @@ function setupMapPhotoDrag(mc2, map) {
             'transition:none',
           ].join(';');
           document.body.appendChild(floatEl);
-          img.style.opacity = '0';
         } else {
           floatEl.style.left = `${ev.clientX - rw / 2}px`;
           floatEl.style.top = `${ev.clientY - rh / 2}px`;
@@ -295,10 +335,13 @@ function setupMapPhotoDrag(mc2, map) {
       };
 
       const cleanUp = (ev) => {
+        if (ended) return;
+        ended = true;
         window.removeEventListener('pointermove', onMove);
         window.removeEventListener('pointerup', onUp);
         window.removeEventListener('pointercancel', onUp);
-        try { inner.releasePointerCapture(e.pointerId); } catch (_) {}
+        restoreMap();
+        try { inner.releasePointerCapture(ev.pointerId); } catch (_) {}
 
         if (floatEl) {
           const target = img.getBoundingClientRect();
@@ -311,7 +354,6 @@ function setupMapPhotoDrag(mc2, map) {
             if (finished) return;
             finished = true;
             floatEl.remove();
-            img.style.opacity = '1';
           };
           floatEl.addEventListener('transitionend', finish, { once: true });
           setTimeout(finish, 420);
@@ -330,20 +372,55 @@ function setupMapPhotoDrag(mc2, map) {
   }
 }
 
-function bindMomentTapAndDrag(el) {
+function bindMomentTapAndDrag(el, map) {
   const mc2 = el.querySelector('.mc2');
   if (!mc2 || mc2._momentTapBound) return;
   mc2._momentTapBound = true;
   mc2.style.pointerEvents = 'auto';
   mc2.style.cursor = 'pointer';
+  mc2.style.touchAction = 'none';
+
+  let tapRestoreMap = null;
+  const releaseTapLock = () => {
+    if (tapRestoreMap) {
+      tapRestoreMap();
+      tapRestoreMap = null;
+    }
+  };
+
+  mc2.addEventListener('pointerdown', (e) => {
+    // Prevent the underlying map canvas from treating a moment tap
+    // as a pan / zoom gesture.
+    e.preventDefault();
+    e.stopPropagation();
+    releaseTapLock();
+    tapRestoreMap = suppressMapPanForPhotoGesture(map);
+  });
+
+  mc2.addEventListener('pointerup', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.setTimeout(releaseTapLock, 30);
+  });
+
+  mc2.addEventListener('pointercancel', () => {
+    window.setTimeout(releaseTapLock, 30);
+  });
+
+  mc2.addEventListener('dblclick', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
 
   mc2.addEventListener('click', (e) => {
+    e.preventDefault();
     if (e.target.closest('.mc2-p1-inner, .mc2-p2-inner, .mc2-p-single-inner')) return;
     e.stopPropagation();
     spawnReactionBurst(mc2);
+    window.setTimeout(releaseTapLock, 80);
   });
 
-  setupMapPhotoDrag(mc2);
+  setupMapPhotoDrag(mc2, map);
 }
 
 // ─── Moment card element ──────────────────────────────────────────────────────
@@ -713,7 +790,7 @@ export default function MapFeed({ onRecord, recording, newMoment }) {
 
         // Create marker without stickers — renders immediately
         const el     = createMomentEl(moment);
-        bindMomentTapAndDrag(el);
+        bindMomentTapAndDrag(el, map);
         const marker = new mapboxgl.Marker({ element: el, anchor: 'bottom-left' })
           .setLngLat(lngLat)
           .addTo(map);
@@ -789,7 +866,7 @@ export default function MapFeed({ onRecord, recording, newMoment }) {
 
       state.moments.push({ moment, marker, inCluster: false, clusterLngLat: null });
 
-      bindMomentTapAndDrag(el);
+      bindMomentTapAndDrag(el, map);
 
       // Spring the new card in, then pulse a purple glow for 4s
       const mc2 = el.querySelector('.mc2');
