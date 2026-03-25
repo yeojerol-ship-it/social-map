@@ -333,14 +333,18 @@ export default function App() {
       flexDirection: 'column',
       width: '100%',
       minHeight: '100dvh',
+      height: '100%',
       overflow: 'hidden',
       background: '#f6f4ea',
-      paddingBottom: 'env(safe-area-inset-bottom, 0px)',
       boxSizing: 'border-box',
     }}>
-        {/* Map — always the base layer */}
+        {/* Map — full viewport (edge-to-edge); bottom safe area handled inside MapFeed controls */}
         <div style={{
-          position: 'absolute', inset: 0,
+          position: 'absolute',
+          inset: 0,
+          width: '100%',
+          height: '100%',
+          minHeight: '100dvh',
           opacity: screen === 'posted' ? 0 : 1,
           transition: 'opacity 0.3s ease',
           pointerEvents: screen === 'map' ? 'auto' : 'none',
@@ -379,9 +383,7 @@ export default function App() {
         </Overlay>
 
         <Overlay visible={screen === 'add-photo'}>
-          <DesignScreenShell>
-            <AddPhoto visible={screen === 'add-photo'} transcript={transcript} onBack={() => go('map')} onPost={handlePost} />
-          </DesignScreenShell>
+          <AddPhoto visible={screen === 'add-photo'} transcript={transcript} onBack={() => go('map')} onPost={handlePost} />
         </Overlay>
 
         {/* Moment viewer — tap any card on the map to open */}
